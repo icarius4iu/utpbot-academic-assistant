@@ -1,0 +1,36 @@
+# Virtual Environment
+venv/
+backend/venv/
+.venv/
+env/
+ENV/
+
+# Python Cache & Compiled
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+
+# Credentials & Sensitive Configurations (CRITICAL SECURITY)
+backend/.env
+backend/credentials.json
+.env
+credentials.json
+*.pem
+*.key
+
+# OS files
+.DS_Store
+Thumbs.db
+db.sqlite3
+
+# IDE / Editor configurations
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
