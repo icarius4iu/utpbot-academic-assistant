@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>UTP IA — Asistente Académico Virtual</title>
+  <meta name="description"
+    content="UTP IA: Asistente académico virtual de la Universidad Tecnológica del Perú. Consulta horarios, notas, exámenes y más." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+
+  <!-- PANTALLA: LOGIN -->
+  <section id="screen-login" class="screen active">
+    <div class="login-lang">
+      <button class="lang-btn active" onclick="setLang('es')" id="btn-lang-es">ES</button>
+      <button class="lang-btn" onclick="setLang('en')" id="btn-lang-en">EN</button>
+    </div>
+    <div class="login-card">
+      <div class="login-logo">
+        <img src="./UTP.png" alt="UTP Logo" onerror="this.src=''; this.style.display='none';" />
+        <h1>UTP IA</h1>
+        <p data-i18n="login.subtitle">Asistente Académico Inteligente</p>
+      </div>
+      <div id="login-error" class="error-msg"></div>
+      <div class="form-group">
+        <label for="input-codigo" data-i18n="login.codigo">Identificador Institucional</label>
+        <div class="form-icon-wrap">
+          <i class="ph ph-identification-card"></i>
+          <input type="text" id="input-codigo" placeholder="Ej: U20201234" autocomplete="username" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="input-password" data-i18n="login.password">Contraseña de acceso</label>
+        <div class="form-icon-wrap">
+          <i class="ph ph-lock-key"></i>
+          <input type="password" id="input-password" placeholder="••••••••" autocomplete="current-password" />
+        </div>
+      </div>
+      <button class="btn-login" id="btn-login" onclick="doLogin()">
+        <span data-i18n="login.btn">Ingresar al sistema</span>
+        <i class="ph ph-arrow-right"></i>
+      </button>
+    </div>
+  </section>
+
+  <!-- PANTALLA: CHAT -->
+  <section id="screen-chat" class="screen">
+    <header class="chat-header">
+      <div class="header-left">
+        <button class="hamburger" onclick="toggleSidebar()" aria-label="Menú"><i class="ph ph-list"></i></button>
+        <img src="./UTP.png" alt="UTP" height="36" onerror="this.src=''; this.style.display='none';" />
+        <div class="header-title">
+          <h2 data-i18n="chat.header.title">Asistente UTP Virtual</h2>
+          <p data-i18n="chat.header.subtitle">Centro de Soporte Académico</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="icon-btn" onclick="startNewChat()" title="Nuevo Chat"><i class="ph ph-chat-plus"></i> <span data-i18n="chat.newchat" class="hide-mobile">Nuevo Chat</span></button>
+        <button class="icon-btn" onclick="doLogout()" title="Cerrar sesión" style="color:var(--rojo)"><i
+            class="ph ph-sign-out"></i> <span data-i18n="chat.logout" class="hide-mobile">Desconectar</span></button>
+      </div>
+    </header>
+
+    <div class="chat-body">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-tabs">
+          <div class="sidebar-tab active" onclick="switchTab('quick')" id="tab-quick" data-i18n="sidebar.tab1">Consultas Ágiles</div>
+          <div class="sidebar-tab" onclick="switchTab('history')" id="tab-history" data-i18n="sidebar.tab2">Historial</div>
+        </div>
+
+        <div class="sidebar-content-area tab-content active" id="content-quick">
+          <div class="sidebar-section">
+            <h3 data-i18n="sidebar.title">Consultas Sugeridas</h3>
+            <div id="quick-buttons">
+              <!-- Botones Dinámicos -->
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-content-area tab-content" id="content-history">
+          <div class="sidebar-section">
+            <h3>Sesiones Anteriores</h3>
+            <div id="history-list">
+              <!-- Historial Dinámico -->
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-footer" style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="user-info">
+            <div class="user-avatar"><i class="ph ph-user"></i></div>
+            <div class="user-details">
+              <div class="user-name" id="sidebar-name">Cargando...</div>
+              <div class="user-role" id="sidebar-rol">—</div>
+            </div>
+          </div>
+          <button class="icon-btn" onclick="openSettings()" title="Ajustes" aria-label="Ajustes" style="border:none; background:transparent;"><i class="ph ph-gear" style="font-size: 20px;"></i></button>
+        </div>
+      </aside>
+
+      <div class="tour-overlay" id="mobile-overlay" onclick="toggleSidebar()" style="z-index:40"></div>
+
+      <!-- Main Chat -->
+      <main class="chat-main" id="chat-main-area">
+        <div class="messages-area" id="messages-area">
+          <!-- Mensajes dinámicos -->
+        </div>
+
+        <div class="typing-indicator" id="typing">
+          <div class="bot-icon msg-icon"><i class="ph ph-robot"></i></div>
+          <div class="typing-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+        </div>
+
+        <div class="chat-input-area" id="chat-input-wrapper">
+          <div id="file-preview-container" style="display:none; padding-bottom:8px; align-items:center; gap:8px;">
+            <i class="ph ph-file-text" style="color:var(--rojo)"></i>
+            <span id="file-preview-name" style="font-size:12px; font-weight:600; color:var(--text); max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></span>
+            <button onclick="clearFile()" aria-label="Quitar archivo" style="color:var(--text-2); display:flex; align-items:center;"><i class="ph ph-x-circle"></i></button>
+          </div>
+          <div class="input-container">
+            <button class="attach-btn" onclick="document.getElementById('file-input').click()" aria-label="Adjuntar archivo"><i class="ph ph-paperclip"></i></button>
+            <button class="voice-btn" onclick="startVoiceMode()" aria-label="Modo de voz" id="btn-voice-toggle"><i class="ph ph-microphone"></i></button>
+            <input type="file" id="file-input" style="display:none" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv" onchange="handleFileUpload(event)">
+            <textarea id="chat-input" rows="1" data-i18n-placeholder="chat.placeholder"
+              placeholder="Escriba su consulta académica o suba un archivo..." onkeydown="handleEnter(event)"
+              oninput="autoResize(this)"></textarea>
+            <button class="send-btn" id="btn-send" onclick="sendMessage()" aria-label="Enviar"><i
+                class="ph ph-paper-plane-right"></i></button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </section>
+
+  <!-- MODAL BIENVENIDA -->
+  <div class="modal-overlay" id="welcome-modal">
+    <div class="welcome-modal">
+      <div class="welcome-icon"><i class="ph ph-sparkle"></i></div>
+      <h2>Bienvenido al Asistente UTP</h2>
+      <p>Hemos renovado por completo el entorno académico para ofrecerte consultas inteligentes, directas y eficaces
+        basadas en tus datos curriculares.</p>
+      <div class="welcome-btns">
+        <button class="btn-primary" onclick="startTour()">Iniciar recorrido guiado</button>
+        <button class="btn-secondary" onclick="closeWelcome()">Omitir y comenzar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL AJUSTES -->
+  <div class="modal-overlay" id="settings-modal" onclick="closeSettings(event)">
+    <div class="welcome-modal" style="text-align:left; max-width: 360px;" id="settings-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+        <h2 style="margin:0; font-size:18px;"><i class="ph ph-gear"></i> Configuración</h2>
+        <button onclick="closeSettingsForce()" style="color:var(--text-2);"><i class="ph ph-x" style="font-size:20px;"></i></button>
+      </div>
+      
+      <div class="settings-group">
+        <label data-i18n="settings.lang" style="display:block; font-size:12px; font-weight:700; color:var(--text-2); margin-bottom:8px; text-transform:uppercase;">Idioma de la Interfaz</label>
+        <div style="display:flex; gap:8px; margin-bottom:20px;">
+          <button class="settings-opt active" id="opt-lang-es" onclick="setLangOpt('es')">Español</button>
+          <button class="settings-opt" id="opt-lang-en" onclick="setLangOpt('en')">English</button>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <label data-i18n="settings.theme" style="display:block; font-size:12px; font-weight:700; color:var(--text-2); margin-bottom:8px; text-transform:uppercase;">Apariencia Visual</label>
+        <div style="display:flex; gap:8px; margin-bottom:20px;">
+          <button class="settings-opt active" id="opt-theme-light" onclick="setThemeOpt('light')"><i class="ph ph-sun"></i> <span data-i18n="settings.light">Claro</span></button>
+          <button class="settings-opt" id="opt-theme-dark" onclick="setThemeOpt('dark')"><i class="ph ph-moon"></i> <span data-i18n="settings.dark">Oscuro</span></button>
+        </div>
+      </div>
+
+      <div class="settings-group" style="padding-top: 10px; border-top: 1px solid var(--border);">
+        <button onclick="clearAllHistory()" style="width:100%; color:var(--rojo); display:flex; align-items:center; justify-content:center; gap:8px; padding:12px; border-radius:8px; background:var(--rojo-light); font-weight:600; font-size:13px; transition:.2s;"><i class="ph ph-trash"></i> <span data-i18n="settings.delete">Eliminar todo el historial</span></button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CAPA TOUR -->
+  <div class="tour-overlay" id="tour-overlay"></div>
+  <div class="tour-box" id="tour-box">
+    <h3 id="tour-title"><i class="ph ph-info"></i> Título</h3>
+    <p id="tour-text">Texto descriptivo de la funcionalidad aquí.</p>
+    <div class="tour-footer">
+      <button class="tour-btn-skip" onclick="endTour()">Saltar</button>
+      <div class="tour-dots" id="tour-dots"></div>
+      <button class="tour-btn" id="tour-next" onclick="nextTourStep()">Siguiente</button>
+    </div>
+  </div>
+
+  <!-- MODAL VOZ -->
+  <div class="modal-overlay voice-overlay" id="voice-modal">
+    <div class="voice-modal-content">
+      <button class="voice-close-btn" onclick="stopVoiceMode()" aria-label="Cerrar"><i class="ph ph-x"></i></button>
+      
+      <div class="voice-status">
+        <i class="ph ph-microphone" id="voice-icon"></i>
+      </div>
+      
+      <h2 id="voice-state-text">Escuchando...</h2>
+      
+      <div class="voice-waves" id="voice-waves">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+      </div>
+      
+      <p class="voice-transcript" id="voice-transcript">Diga su consulta para la UTP...</p>
+    </div>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UTP IA — Panel de Administración</title>
+  <meta name="description" content="Panel de administración del Asistente Académico Virtual UTP. Métricas de uso, analytics y gestión del sistema." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+
+<body>
+
+  <!-- LOADER -->
+  <div class="admin-loader" id="admin-loader">
+    <div class="loader-content">
+      <div class="loader-logo">
+        <img src="./UTP.png" alt="UTP" height="56" onerror="this.style.display='none'" />
+        <h1>UTP IA</h1>
+      </div>
+      <div class="loader-spinner"></div>
+      <p>Cargando panel de administración...</p>
+    </div>
+  </div>
+
+  <!-- WRAPPER PRINCIPAL -->
+  <div class="admin-wrapper" id="admin-wrapper" style="display:none">
+
+    <!-- SIDEBAR NAV -->
+    <aside class="admin-sidebar" id="admin-sidebar">
+      <div class="sidebar-brand">
+        <img src="./UTP.png" alt="UTP" height="40" onerror="this.style.display='none'" />
+        <div>
+          <h2>UTP IA</h2>
+          <span>Admin Panel</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="nav-item active" id="nav-overview" onclick="showSection('overview')">
+          <i class="ph ph-chart-pie"></i>
+          <span>Dashboard</span>
+        </a>
+        <a class="nav-item" id="nav-activity" onclick="showSection('activity')">
+          <i class="ph ph-chart-line-up"></i>
+          <span>Actividad</span>
+        </a>
+        <a class="nav-item" id="nav-logs" onclick="showSection('logs')">
+          <i class="ph ph-list-magnifying-glass"></i>
+          <span>Consultas Recientes</span>
+        </a>
+        <a class="nav-item" id="nav-telegram" onclick="showSection('telegram')">
+          <i class="ph ph-telegram-logo"></i>
+          <span>Bot Telegram</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer-admin">
+        <div class="admin-user">
+          <div class="admin-avatar"><i class="ph ph-shield-check"></i></div>
+          <div>
+            <div class="admin-name" id="admin-name-sidebar">Administrador</div>
+            <div class="admin-role-tag">Admin UTP</div>
+          </div>
+        </div>
+        <button class="btn-logout-admin" onclick="doAdminLogout()" title="Cerrar sesión">
+          <i class="ph ph-sign-out"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-main">
+
+      <!-- TOP BAR -->
+      <header class="admin-topbar">
+        <button class="hamburger-admin" onclick="toggleAdminSidebar()">
+          <i class="ph ph-list"></i>
+        </button>
+        <div class="topbar-title">
+          <h1 id="page-title">Dashboard de Métricas</h1>
+          <p id="page-subtitle">Resumen general del sistema UTPBot</p>
+        </div>
+        <div class="topbar-actions">
+          <div class="last-update" id="last-update-text">Actualizando...</div>
+          <button class="btn-refresh" onclick="cargarDashboard()" title="Actualizar datos">
+            <i class="ph ph-arrows-clockwise" id="refresh-icon"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- ══════════════════════ SECCIÓN: OVERVIEW ══════════════════════ -->
+      <section class="admin-section active" id="section-overview">
+
+        <!-- KPI CARDS -->
+        <div class="kpi-grid">
+          <div class="kpi-card" id="kpi-total">
+            <div class="kpi-icon kpi-blue"><i class="ph ph-chat-dots"></i></div>
+            <div class="kpi-data">
+              <div class="kpi-value" id="kpi-total-val">—</div>
+              <div class="kpi-label">Total Consultas</div>
+            </div>
+            <div class="kpi-trend" id="kpi-total-trend"></div>
+          </div>
+          <div class="kpi-card" id="kpi-hoy">
+            <div class="kpi-icon kpi-green"><i class="ph ph-calendar-check"></i></div>
+            <div class="kpi-data">
+              <div class="kpi-value" id="kpi-hoy-val">—</div>
+              <div class="kpi-label">Consultas Hoy</div>
+            </div>
+          </div>
+          <div class="kpi-card" id="kpi-usuarios">
+            <div class="kpi-icon kpi-purple"><i class="ph ph-users"></i></div>
+            <div class="kpi-data">
+              <div class="kpi-value" id="kpi-usuarios-val">—</div>
+              <div class="kpi-label">Usuarios Activos</div>
+            </div>
+          </div>
+          <div class="kpi-card" id="kpi-categoria">
+            <div class="kpi-icon kpi-orange"><i class="ph ph-fire"></i></div>
+            <div class="kpi-data">
+              <div class="kpi-value kpi-value-sm" id="kpi-categoria-val">—</div>
+              <div class="kpi-label">Categoría Top</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROL PROGRESS BARS -->
+        <div class="roles-card glass-card">
+          <div class="card-header">
+            <h3><i class="ph ph-users-three"></i> Distribución por Rol</h3>
+          </div>
+          <div class="roles-body">
+            <div class="role-bar-group">
+              <div class="role-bar-label">
+                <span><i class="ph ph-student"></i> Estudiantes</span>
+                <span id="pct-estudiantes">—%</span>
+              </div>
+              <div class="role-bar-track">
+                <div class="role-bar-fill role-blue" id="bar-estudiantes" style="width:0%"></div>
+              </div>
+            </div>
+            <div class="role-bar-group">
+              <div class="role-bar-label">
+                <span><i class="ph ph-chalkboard-teacher"></i> Docentes</span>
+                <span id="pct-docentes">—%</span>
+              </div>
+              <div class="role-bar-track">
+                <div class="role-bar-fill role-purple" id="bar-docentes" style="width:0%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CHARTS ROW -->
+        <div class="charts-grid">
+          <div class="chart-card glass-card">
+            <div class="card-header">
+              <h3><i class="ph ph-chart-pie-slice"></i> Categorías de Consulta</h3>
+            </div>
+            <div class="chart-container-sm">
+              <canvas id="chart-category"></canvas>
+            </div>
+          </div>
+          <div class="chart-card glass-card">
+            <div class="card-header">
+              <h3><i class="ph ph-chart-bar"></i> Consultas por Rol</h3>
+            </div>
+            <div class="chart-container-sm">
+              <canvas id="chart-role"></canvas>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ══════════════════════ SECCIÓN: ACTIVIDAD ══════════════════════ -->
+      <section class="admin-section" id="section-activity">
+        <div class="glass-card chart-card-full">
+          <div class="card-header">
+            <h3><i class="ph ph-chart-line-up"></i> Consultas por Día — Últimos 30 días</h3>
+            <div class="chart-legend-inline">
+              <span class="legend-dot legend-red"></span> Consultas diarias
+            </div>
+          </div>
+          <div class="chart-container-lg">
+            <canvas id="chart-daily"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════ SECCIÓN: LOGS ══════════════════════ -->
+      <section class="admin-section" id="section-logs">
+        <div class="glass-card">
+          <div class="card-header">
+            <h3><i class="ph ph-list-magnifying-glass"></i> Consultas Recientes</h3>
+            <div class="logs-controls">
+              <input type="text" class="search-input" id="search-logs" placeholder="Buscar consulta..." oninput="filtrarLogs()" />
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <table class="admin-table" id="logs-table">
+              <thead>
+                <tr>
+                  <th>Fecha / Hora</th>
+                  <th>Código</th>
+                  <th>Rol</th>
+                  <th>Categoría</th>
+                  <th>Consulta</th>
+                </tr>
+              </thead>
+              <tbody id="logs-tbody">
+                <tr>
+                  <td colspan="5" class="table-loading"><div class="mini-spinner"></div> Cargando...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════ SECCIÓN: TELEGRAM ══════════════════════ -->
+      <section class="admin-section" id="section-telegram">
+        <div class="telegram-grid">
+
+          <!-- Estado del bot -->
+          <div class="glass-card telegram-status-card">
+            <div class="card-header">
+              <h3><i class="ph ph-telegram-logo"></i> Estado del Bot</h3>
+            </div>
+            <div class="tg-status-body">
+              <div class="tg-status-row">
+                <span>Token configurado</span>
+                <span class="status-badge" id="tg-token-status">Verificando...</span>
+              </div>
+              <div class="tg-status-row">
+                <span>Webhook activo</span>
+                <span class="status-badge" id="tg-webhook-status">Verificando...</span>
+              </div>
+              <div class="tg-status-row">
+                <span>URL del webhook</span>
+                <span class="tg-url" id="tg-webhook-url">—</span>
+              </div>
+              <div class="tg-status-row">
+                <span>Estado general</span>
+                <span class="status-badge status-large" id="tg-overall-status">Verificando...</span>
+              </div>
+            </div>
+            <button class="btn-tg-action" onclick="verificarTelegram()">
+              <i class="ph ph-arrows-clockwise"></i> Verificar Estado
+            </button>
+          </div>
+
+          <!-- Configurar webhook -->
+          <div class="glass-card telegram-setup-card">
+            <div class="card-header">
+              <h3><i class="ph ph-gear"></i> Configurar Webhook</h3>
+            </div>
+            <div class="tg-setup-body">
+              <p class="tg-info">
+                Para activar el bot, configura el webhook apuntando a la URL pública de tu backend.
+                Esto debe hacerse una vez después del deploy.
+              </p>
+              <div class="tg-step">
+                <div class="step-num">1</div>
+                <div class="step-text">Crea tu bot en Telegram con <strong>@BotFather</strong> y obtén el token</div>
+              </div>
+              <div class="tg-step">
+                <div class="step-num">2</div>
+                <div class="step-text">Agrega el token a <code>TELEGRAM_BOT_TOKEN</code> en el <code>.env</code></div>
+              </div>
+              <div class="tg-step">
+                <div class="step-num">3</div>
+                <div class="step-text">Configura <code>TELEGRAM_WEBHOOK_URL</code> con la URL de tu backend en Railway/Render</div>
+              </div>
+              <div class="tg-step">
+                <div class="step-num">4</div>
+                <div class="step-text">Haz clic en el botón para activar el webhook</div>
+              </div>
+
+              <button class="btn-tg-activate" onclick="activarWebhook()" id="btn-activate-webhook">
+                <i class="ph ph-plug"></i> Activar Webhook
+              </button>
+              <div class="tg-msg" id="tg-setup-msg"></div>
+            </div>
+          </div>
+
+          <!-- Comandos del bot -->
+          <div class="glass-card telegram-commands-card">
+            <div class="card-header">
+              <h3><i class="ph ph-terminal"></i> Comandos del Bot</h3>
+            </div>
+            <div class="commands-list">
+              <div class="command-item">
+                <code>/start</code>
+                <span>Iniciar el bot y ver bienvenida</span>
+              </div>
+              <div class="command-item">
+                <code>/identificar</code>
+                <span>Vincular código institucional UTP</span>
+              </div>
+              <div class="command-item">
+                <code>/ayuda</code>
+                <span>Ver todos los comandos disponibles</span>
+              </div>
+              <div class="command-item">
+                <code>/nueva</code>
+                <span>Iniciar nueva conversación</span>
+              </div>
+              <div class="command-item">
+                <code>/salir</code>
+                <span>Cerrar sesión del bot</span>
+              </div>
+              <div class="command-item">
+                <code>[Mensaje libre]</code>
+                <span>Hacer una consulta académica directamente</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="./admin.js"></script>
+</body>
+
+</html>

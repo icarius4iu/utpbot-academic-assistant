@@ -1,0 +1,992 @@
+BASE DE CONOCIMIENTO
+INSTITUCIONAL
+Universidad Tecnológica del Perú
+Edición 2026 · Para uso de asistentes de IA académicos
+Documento generado para alimentar el motor de conocimiento de UTPBot
+Fuentes: utp.edu.pe · portal.transparencia · SUNEDU · SCImago · Medios especializados 2025-2026
+Fecha de compilación: Abril 2026
+1. DATOS INSTITUCIONALES Y ESTRUCTURA
+1.1 Ficha Institucional
+Campo
+Información
+Nombre completo
+Universidad Tecnológica del Perú S.A.C.
+Siglas
+UTP
+RUC
+20462509236
+Tipo
+Universidad privada con fines de lucro
+Fecha de fundación
+8 de septiembre de 1997
+Fundador
+Ing. Roger Amuruz Gallegos (Grupo IDAT)
+Propietario actual
+Grupo Intercorp (desde julio de 2012)
+Presidente
+Carlos Rodríguez-Pastor (Intercorp)
+Sitio web oficial
+www.utp.edu.pe
+Portal estudiantil
+info.utp.edu.pe / UTP+ Portal / UTP+ App
+Teléfono admisión Lima
+(01) 315-9610
+Línea provincial gratuita
+0801-19-610
+Teléfono SAE Lima
+(01) 315-9600
+Licencia SUNEDU
+Otorgada junio 2019 (6 años) – en proceso de renovación
+Lema institucional
+Tecnología como forma de pensar
+1.2 Misión y Visión
+Misión: "Dar a todos los peruanos acceso a una educación superior de calidad que les permita alcanzar una
+vida mejor."
+Visión: "Ser la primera opción para estudiantes con afán de superación que contribuyan a un Perú mejor."
+1.3 Grupo Empresarial Intercorp
+La UTP pertenece al Grupo Intercorp, el conglomerado privado más grande del Perú, liderado por Carlos
+Rodríguez-Pastor. Otras entidades educativas del grupo incluyen:
+• IDAT – Instituto de educación superior tecnológico
+• Innova Schools – Cadena de colegios privados de bajo costo
+• Zegel – Escuela de negocios (ex IPAE)
+• Corriente Alterna – Editorial educativa
+• Colectivo 23 – Educación superior alternativa
+Empresas no educativas del grupo: Interbank, Real Plaza, Plaza Vea/Vivanda, InkaFarma, entre otras. Los
+convenios Intercorp ofrecen a empleados del grupo descuentos del 20% en pensiones UTP.
+1.4 Cronología Institucional
+Año
+Hito
+1997
+Fundación de la UTP en Lima por el Ing. Roger Amuruz Gallegos
+Año
+Hito
+1997
+CONAFU autoriza el funcionamiento universitario (noviembre)
+2012
+Grupo Intercorp adquiere la UTP y la Universidad Privada de Chiclayo (UPCH)
+2016
+Creación de la Dirección de Investigación UTP
+2018 (enero)
+UTP solicita creación de 8 nuevas filiales durante período de ventana
+2019 (junio)
+SUNEDU otorga licencia institucional por 6 años (Res. CD N°074-2019-SUNEDU/CD)
+2019
+Multa y desistimiento de filial Chiclayo durante el licenciamiento (S/ 708,750)
+2024
+UTP alcanza top 5 nacional en Ranking SCImago (N°1 en Ingeniería y Computación)
+2025
+Ranking SUNEDU publica IV Informe Bienal 2021-2022
+2025
+UTP en proceso de renovación de licencia SUNEDU (vigencia extendida)
+2026
+Actualización del Reglamento de Becas Pregrado (V17, Res. 0064-2026/R-UTP)
+2026
+Nueva Guía del Egresado aprobada (Res. 0012-2026/R-UTP)
+2. SEDES Y CAMPUS NACIONALES
+La UTP opera 15 campus a nivel nacional distribuidos en Lima y provincias.
+Campus
+Dirección
+Código campus Teléfono
+Lima Centro
+Jr. Hernán Velarde 289, Lince/Lima
+LIMA
+(01) 315-9610
+Lima Norte
+Av. Alfredo Mendiola 6377, Los Olivos
+LIMAN
+(01) 315-9610
+Lima Sur
+Carretera Panamericana Sur Km 16, VES
+LIMAS
+(01) 315-9610
+Lima Este – Ate
+Carretera Central Km 11.6, Ate
+LIATE
+(01) 315-9610
+Lima Este – SJL
+Av. El Sol cuadra 2, San Juan de LuriganchoLISOL
+(01) 315-9610
+Arequipa
+Av. Tacna y Arica 160, Arequipa
+AREQU
+0801-19-610
+Chiclayo
+Esq. Prol. A.B. Leguía con Av. H. Meiner
+CHICL
+0801-19-610
+Chimbote
+Panamericana Norte Km 424, Nuevo Chimbote
+CHIMB
+0801-19-610
+Huancayo
+Av. Circunvalación 449, Urb. Acuario, El Tambo
+HUANC
+0801-19-610
+Ica
+Av. Ayabaca S/N, Sector San José, Ica
+ICA
+0801-19-610
+Iquitos
+Av. J.A. Quiñones 1478, San Juan Bautista IQUIT
+0801-19-610
+Piura
+Av. Vice Cdra. 1, Urb. San Eduardo, Piura PIURA
+0801-19-610
+Tacna
+Av. Billinghurst 800, Zona Pago Collana
+TACNA
+0801-19-610
+Trujillo
+Av. Nicolás de Piérola 1221, Trujillo
+TRUJI
+0801-19-610
+Pucallpa
+Av. Centenario 3915, Callería, Pucallpa
+PLLPA
+0801-19-610
+Nota: Los campus de Lima operan bajo el régimen de Sede Principal. Las demás ciudades funcionan como
+Filiales. La licencia SUNEDU vigente autoriza operaciones en 22 locales distribuidos en esta red.
+3. CIFRAS Y ESTADÍSTICAS INSTITUCIONALES
+3.1 Matrícula y Población Estudiantil
+Indicador
+Dato
+Fuente/Período
+Total estudiantes pregrado (nacional)
+~188,800
+SUNEDU / Marzo 2023
+Estudiantes matriculados en Lima
+~96,364
+La República / 2023-2024
+Posición: univ. privada con mayor matr. en Lima
+N° 1
+SUNEDU 2024
+Estudiantes en programas de Ingeniería
+~52% del total
+Wikipedia / UTP
+Estudiantes en Administración y Negocios
+~29% del total
+Wikipedia / UTP
+Estudiantes en 2012 (antes de Intercorp)
+~16,974
+Datos históricos
+Total programas (pregrado + posgrado)
+63 programas
+UTP oficial
+Docentes a tiempo completo (al licenciamiento 2019)
+26.6%
+SUNEDU (antes: 4%)
+3.2 Rankings y Reconocimientos
+Ranking
+Posición UTP
+Período
+SCImago Institutions Rankings – Perú (general)
+Top 5 nacional
+2024
+SCImago – Ingeniería y Computación (Perú)
+N° 1 nacional
+2024
+SCImago – Energía (Perú)
+N° 2 nacional
+2024
+SCImago – Ciencias Sociales (Perú)
+N° 2 nacional
+2024
+SCImago – Supera a la UNI en Ingeniería
+Sí (confirmado)
+2024
+QS Latin America & Caribbean
+#401+ (banda regional)
+2026 edición
+Webometrics – Perú
+Puesto ~27
+2024-2025
+Ranking SUNEDU IV Informe Bienal (privadas)
+No figura en top 10 privadas 2021-2022
+Nota: El Ranking SUNEDU 2025 (IV Informe 2021-2022) coloca a la UPCH, PUCP y UCS en los primeros tres puestos de
+privadas. La UTP destaca principalmente en SCImago por producción científica en Ingeniería.
+3.3 Investigación
+Indicador
+Dato
+Dirección de Investigación (fundación)
+2016
+Presupuesto investigación 2016
+S/ 498,000
+Presupuesto investigación 2019
+S/ 5,700,000
+Proyectos de investigación (2019)
+9 activos + 35 proyectados
+Repositorio institucional
+Disponible en línea (tesis, artículos, ponencias)
+Centro de Apoyo Tecnología e Innovación (CATI)
+Convenio con INDECOPI – asesoría en patentes
+Revista institucional
+Investiga UTP (desde marzo 2018)
+Publicaciones indexadas
+Scopus y Web of Science (coordinadores de publicaciones)
+4. OFERTA ACADÉMICA COMPLETA
+4.1 Facultades y Carreras de Pregrado
+La UTP organiza sus carreras en las siguientes facultades principales:
+FACULTAD DE INGENIERÍA
+• Ingeniería Civil
+• Ingeniería Industrial
+• Ingeniería Mecánica
+• Ingeniería Electrónica
+• Ingeniería de Sistemas e Informática
+• Ingeniería Mecatrónica
+• Ingeniería Automotriz
+• Ingeniería Marítima (única en otorgar título de Oficial de Marina Mercante – ISO 9001:2015)
+• Ingeniería de Seguridad Industrial y Minera
+• Ingeniería Textil
+• Ingeniería Aeronáutica
+• Ingeniería Ambiental
+• Ingeniería Biomédica
+• Ingeniería de Software
+FACULTAD DE NEGOCIOS
+• Administración de Empresas
+• Administración y Marketing
+• Administración y Negocios Internacionales
+• Contabilidad
+• Economía
+• Banca y Finanzas
+• Hotelería y Turismo
+FACULTAD DE DERECHO
+• Derecho
+FACULTAD DE EDUCACIÓN
+• Educación Inicial
+• Educación Primaria
+FACULTAD DE PSICOLOGÍA
+• Psicología
+FACULTAD DE ARQUITECTURA Y DISEÑO
+• Arquitectura
+• Diseño de Interiores
+• Diseño Gráfico
+• Diseño Digital Publicitario / Comunicación y Publicidad
+FACULTAD DE CIENCIAS DE LA SALUD
+• Nutrición y Dietética
+• Enfermería
+• Obstetricia
+• Terapia Física y Rehabilitación
+• Bioquímica y Farmacia
+• Odontología
+• Tecnología Médica
+FACULTAD DE MEDICINA
+• Medicina Humana
+CIENCIAS DE LA COMUNICACIÓN
+• Ciencias de la Comunicación
+• Periodismo
+4.2 Modalidades de Estudio
+Modalidad
+Descripción
+Horarios
+Presencial
+Clases en campus en cualquiera de los 15 sedes. Infraestructura completa.
+Mañana / tarde
+Semipresencial
+Combinación de clases presenciales y virtuales. Mayor flexibilidad horaria.
+Mixto
+100% Virtual
+Clases grabadas y materiales digitales disponibles todo el ciclo. Sin asistencia física.
+Libre
+CGT – Carrera para Gente que Trabaja
+Modalidad especial para trabajadores. Clases en fines de semana o turnos nocturnos.
+Noches / fines de semana
+4.3 Duración de Carreras
+• Pregrado regular: 10 a 12 semestres (5 a 6 años). Sigue la Ley Universitaria N° 30220.
+• Maestrías: 18 a 24 meses en modalidad presencial, semipresencial o a distancia.
+• Doctorados: Aproximadamente 3 a 4 años.
+• Segundas especialidades (post-título): disponibles en áreas de salud y educación.
+4.4 Programas de Posgrado (Escuela de Postgrado UTP)
+La Escuela de Postgrado UTP cuenta con acreditaciones internacionales ACBSP (negocios) y GAC (gestión de
+proyectos). Maestrías disponibles:
+Área
+Maestrías disponibles
+Negocios
+MBA – Administración de Empresas, Finanzas Corporativas, Marketing, Derecho Empresarial
+Tecnología
+Ciberseguridad, Ciencia de Datos e Inteligencia Artificial, TI y Transformación Digital
+Gestión
+Gerencia de Operaciones y Logística, Gestión Pública, Gestión de la Construcción, Gestión Minera
+Proyectos
+Project Management (acreditado por PMI-GAC)
+Educación
+Docencia Universitaria, Educación e Innovación Pedagógica
+Personas
+Talento Humano
+Doctorados
+Doctorado en Educación, Doctorado en Administración Estratégica de Negocios
+5. PROCESO DE ADMISIÓN
+5.1 Modalidades de Ingreso
+Modalidad
+Requisito / Descripción
+Examen Preferencial
+Para egresados del colegio en el año en curso o el año anterior
+Examen Regular
+Para quienes terminaron el colegio hace 2 o más años
+Tercio Superior
+Ingreso directo si el postulante fue del tercio superior en 4° y 5° de secundaria
+Promedio 14+
+Promedio de 14 o más en 4° y 5° de secundaria – ingreso directo
+Traslado Externo
+Mínimo 72 créditos aprobados en otra universidad/instituto
+Evaluación de Documentos
+Para titulados universitarios o de institutos superiores (requiere 3 años de experiencia laboral)
+Fuerzas Armadas / PNP
+Oficiales y suboficiales – ingreso directo
+Deportistas Calificados
+Con acreditación de federación deportiva nacional
+Bachillerato Internacional
+Egresados de bachillerato francés, italiano o alemán
+Pre-universitario UTP
+Cursos de nivelación + examen final en la academia UTP
+5.2 Documentos para la Inscripción
+• Ficha de inscripción (en línea o presencial)
+• Fotocopia del DNI vigente
+• Constancia de pago del derecho de admisión
+• Constancia de tercio superior o carta del colegio (si aplica)
+• Certificados de estudios anteriores (para traslado o evaluación de documentos)
+5.3 Calendarios de Admisión
+• Ciclo I (inicio marzo): Convocatoria entre septiembre-febrero del año anterior
+• Ciclo II (inicio agosto-septiembre): Convocatoria entre abril-julio
+• Ciclo Verano (enero): Convocatoria en noviembre-diciembre
+Los resultados de admisión se publican en: resultadosadmision.utp.edu.pe y se notifican al correo registrado.
+5.4 Convalidaciones
+La UTP permite convalidar cursos aprobados en otras universidades o institutos. Existe un Simulador de
+Convalidaciones en línea para estimar créditos transferibles. El trámite formal se solicita al SAE antes de la
+matrícula, adjuntando certificados de notas oficiales.
+6. COSTOS, PENSIONES Y FINANCIAMIENTO (2026)
+6.1 Estructura General de Costos
+Concepto
+Monto aprox.
+Inscripción (derecho de admisión)
+S/ 450
+Matrícula por ciclo
+S/ 315 – S/ 845 (según carrera y sede)
+Seguro estudiantil
+Incluido en la matrícula
+Pensión mensual (carreras generales)
+S/ 475 – S/ 890
+Pensión mensual (Medicina Humana)
+S/ 1,400 – S/ 2,800 (según créditos)
+Costo promedio semestral
+≈ S/ 4,825
+Costo anual mínimo estimado
+> S/ 6,000 (sin incluir materiales ni transporte)
+6.2 Tabla de Pensiones por Rango de Créditos – Lima Centro (Marzo 2026)
+Créditos / Horas
+Carreras Generales (S/)
+Enfermería / Obstetricia (S/) Farmacia / Bioquímica (S/)
+1 – 6 créditos
+465.00
+442.50
+550.00
+7 – 11 créditos
+651.00
+619.50
+770.00
+12 – 15 créditos
+827.70
+787.65
+979.00
+16 – 22 créditos
+930.00
+885.85
+1,100.00
+Hora adicional (>22)
+S/ 38.05 – 42.30 por hora extra Varía según carrera
+Varía según carrera
+Fuente: Guía del Estudiante UTP Pregrado 2025-2026. Los montos pueden variar por sede y ciclo. Para datos exactos y
+actualizados consultar en UTP+ Info o al SAE.
+6.3 Pensiones por Carrera (Estimados 2026)
+Carrera
+Pensión mensual aprox. (S/) Observación
+Ingeniería (Industrial, Civil, Sistemas, etc.)800 – 930
+Varía por créditos y sede
+Administración / Negocios Internacionales812 – 890
+Depende de sede y carga
+Derecho
+800 – 930
+Similar a ingeniería
+Psicología
+800 – 890
+Total carrera ≈ S/ 40,000
+Arquitectura / Diseño
+800 – 930
+Puede requerir materiales adicionales
+Nutrición y Dietética
+800 – 890
+Área de salud general
+Enfermería / Obstetricia
+885 – 980
+Tarifa diferenciada
+Farmacia y Bioquímica
+979 – 1,100
+Tarifa diferenciada salud
+Medicina Humana
+1,400 – 2,800
+La más costosa; requiere laboratorios clínicos
+Provincias (referencial Arequipa, Trujillo) 550 – 700
+Generalmente más accesible que Lima
+6.4 Descuentos y Facilidades de Pago
+Tipo de descuento / beneficio
+Porcentaje / Condición
+Pronto pago (antes de vencimiento)
+5% sobre la pensión del mes
+Pago anticipado del semestre completo
+10% sobre el total del ciclo
+Descuento hermanos
+Descuento aplicable a hermanos estudiantes simultáneos en UTP
+Pago con Scotiabank o Interbank
+Descuento adicional del 5%
+Convenio Intercorp (empleados grupo)
+20% de descuento en pensiones
+Convenio Fuerzas Armadas / PNP
+Descuento especial – consultar en admisión
+Beca socioeconómica
+10% – 50% según situación comprobada
+Beca por orfandad
+10% – 100% según caso (pérdida del tutor económico)
+Beca por discapacidad (CONADIS)
+10% – 25% con acreditación CONADIS
+Beca excelencia académica (ingreso)
+10% – 50% según rendimiento previo
+Beca excelencia académica (cursando)
+Hasta 20% por buen promedio en carrera
+7. BECAS Y PROGRAMAS DE FINANCIAMIENTO
+7.1 Becas Internas UTP
+Reglamento vigente: Reglamento de Becas Pregrado 2026 (V17), aprobado mediante Resolución Rectoral N°
+0064-2026/R-UTP.
+Beca / Beneficio
+Cobertura
+Requisitos principales
+Beca Socioeconómica
+10% – 50% pensión
+Situación económica comprobada que ponga en riesgo los estudios
+Beca Orfandad
+10% – 100% pensión Pérdida del padre o tutor responsable económico
+Beca Discapacidad
+10% – 25% pensión
+Registro CONADIS y dificultad económica comprobada
+Beca Excelencia (ingreso)
+10% – 50% pensión
+Tercio superior, alto promedio escolar o examen de admisión
+Beca Excelencia (en carrera)
+Hasta 20% pensión
+Alto promedio acumulado en UTP
+Descuento hermanos
+Variable
+Dos o más hermanos matriculados simultáneamente en UTP
+7.2 Becas Estatales y Externas
+Programa
+Cobertura
+Descripción
+Beca COAR
+100% integral
+Para egresados de Colegios de Alto Rendimiento. Cubre admisión, matrícula, pensiones y 
+Beca 18 (PRONABEC)
+100% integral
+Para estudiantes de alto rendimiento en situación de pobreza o pobreza extrema. La UTP e
+Beca Doble Oportunidad Parcial
+Para personas mayores de 30 años sin educación superior.
+Convenios Gobiernos Regionales
+Variable
+Algunos gobiernos regionales tienen convenios con UTP para financiar estudios de sus ciu
+8. MATRÍCULA Y PROCESO ACADÉMICO
+8.1 Proceso de Matrícula
+• La matrícula se realiza a través del portal UTP+ Portal o la App UTP+.
+• Es un acto personal: el estudiante debe realizar el proceso directamente.
+• Antes de matricularse, se deben pagar el derecho de matrícula y el seguro estudiantil.
+• Costo de matrícula referencial 2025-2026: S/ 484 (más S/ 45 por seguro estudiantil).
+• Los postulantes admitidos se matriculan automáticamente en todas las asignaturas del primer nivel de su
+plan de estudios.
+8.2 Reglas Clave de la Matrícula (Reglamento de Estudios Pregrado V11+)
+• El estudiante debe priorizar las asignaturas reprobadas antes de inscribirse en asignaturas de niveles
+superiores (Art. 27).
+• No se puede matricular en una asignatura si no se han cumplido los prerrequisitos del plan de estudios (Art.
+28).
+• Si la sección elegida se cancela (menos de 15 alumnos), el estudiante puede matricularse en otra sección
+disponible (Art. 30).
+• Para matricularse el estudiante debe haber realizado todos los pagos requeridos.
+• El calendario de matrícula y plazos se publica en la Guía del Estudiante en UTP+ Info e UTP+ Portal.
+8.3 Retiro de Cursos y Asignaturas
+• Existen plazos específicos para retiro parcial o definitivo sin penalidad económica.
+• El retiro después del plazo establecido puede implicar la retención del pago de pensión.
+• El retiro debe formalizarse a través de SAE o UTP+ Portal; hacerlo sin notificar registra infracción.
+• Para reincorporarse en ciclos posteriores se debe solicitar reingreso al SAE antes del inicio del siguiente
+semestre.
+8.4 Ciclos Académicos
+Ciclo
+Inicio aproximado
+Fin aproximado
+Ciclo I (Regular)
+Marzo
+Agosto
+Ciclo II (Regular)
+Agosto / Septiembre
+Diciembre / Enero
+Ciclo Verano
+Enero
+Febrero
+8.5 Permanencia y Rendimiento
+• El estudiante que reprueba una asignatura debe volver a matricularla en el siguiente ciclo con carácter
+prioritario.
+• No existe pérdida de año académico; el avance depende de la aprobación de créditos requeridos.
+• Se puede solicitar revisión de nota ante el SAE en los plazos establecidos tras la publicación.
+• Para apelar una nota: solicitud escrita al Director Académico con evidencias dentro del plazo.
+9. GRADOS ACADÉMICOS Y TITULACIÓN
+9.1 Grados y Títulos en el Sistema Peruano
+Grado / Título
+Descripción
+Requisitos en UTP
+Bachiller
+Grado académico universitario.
+Completar todos los créditos del plan de estudios (10-12 semestres).
+Título Profesional
+Habilitación para el ejercicio profesional.
+Tener el grado de bachiller + trabajo de titulación aprobado.
+Maestro (Magíster)
+Posgrado – grado académico avanzado.
+Completar créditos de maestría + tesis o trabajo de investigación.
+Doctor
+Máximo grado académico universitario.
+Completar créditos del doctorado + tesis doctoral con aporte original.
+Segunda Especialidad
+Post-título en área específica.
+Tener título profesional previo + completar programa de especialización.
+9.2 Modalidades de Titulación (Pregrado)
+Según el Reglamento de Grados y Títulos UTP (REC-RG002, versión vigente 2025-2026):
+• Tesis tradicional: Elaboración, sustentación y aprobación de una tesis de investigación ante un jurado
+evaluador.
+• Tesis en formato de artículo científico: El trabajo de grado se redacta como artículo enviado a revista
+indexada (Scopus o WoS).
+• Para egresados anteriores a 2014: Programas Especiales de Titulación (PET) o Segundas Especialidades
+como alternativas. Los PET han sido reemplazados progresivamente por segundas especialidades.
+El proceso completo requiere: (1) Haber egresado con todos los créditos aprobados, (2) Obtener el grado de
+bachiller, (3) Presentar, sustentar y aprobar el trabajo de titulación.
+9.3 Bachillerato Automático por Grado Previo
+Si el estudiante ya cuenta con grado de bachiller en otra universidad, la UTP puede reconocer ese grado previa
+cursación de un diplomado de nivelación. El estudiante se inscribe directamente como titular. Consultar al SAE
+o Reglamento de Grados y Títulos para el procedimiento específico.
+9.4 Registro de Grados y Títulos
+Todos los grados y títulos otorgados por la UTP se registran en el RENATI (Registro Nacional de Trabajos de
+Investigación) de la SUNEDU, que es la base de datos oficial del Perú.
+10. REGLAMENTOS Y NORMATIVAS VIGENTES
+10.1 Catálogo de Reglamentos Principales
+Código
+Reglamento
+Versión vigente
+Resolución
+REC-RG001
+Reglamento de Admisión de Pregrado y Postgrado
+V12 (2025)
+RR N° 0252-2025/R-UTP
+REC-RG002
+Reglamento de Grados y Títulos
+V09 (2025)
+Vigente 2025-2026
+REC-RG003
+Reglamento General
+V02 (2025)
+RR N° 0145-2025/R-UTP
+REC-RG004
+Reglamento de Disciplina del Estudiante
+V07 (2025)
+RR N° 0081-2025/R-UTP
+REC-RG005
+Reglamento de Estudios de Pregrado
+V11 (2023+)
+RR N° 0172-2023/R-UTP
+REC-RG009
+Reglamento para el uso de Sistemas Informáticos y Servicios Digitales
+V02
+RR N° 110-2024/R-UTP
+—
+Reglamento de Becas Pregrado
+V17 (2026)
+RR N° 0064-2026/R-UTP
+—
+Reglamento del Docente
+V06 (2024)
+RR N° 105-2024/R-UTP
+—
+Reglamento del Internado de Psicología
+V04 (2023)
+RR N° 0145-2023
+—
+Reglamento de Deportes de Alta Competencia
+V04 (2026)
+RR N° 0007-2026/R-UTP
+—
+Reglamento de Prevención y Sanción del Hostigamiento Sexual
+V02 (2022)
+RR N° 0075-2022/R-UTP
+—
+Reglamento Interno Servicio Civil de Alumnos – Derecho
+V05
+Vigente
+10.2 Reglamento de Disciplina del Estudiante – Resumen
+Categoría de falta
+Ejemplos
+Sanciones
+Falta leve
+Llegar tarde repetidamente, no identificarse con carné en examen
+Amonestación escrita
+Falta grave
+Copiar en exámenes, compartir cuentas del sistema, uso indebido de red
+Suspensión temporal (1 ciclo)
+Falta muy grave
+Violencia física, falsificación de documentos, acoso sexual, infracciones informáticas graves
+Separación definitiva (expulsión)
+• Escala de sanciones acumuladas: 2 amonestaciones = suspensión. 2 suspensiones = expulsión definitiva.
+• Consecuencia de expulsión: Pérdida del derecho a devolución de pensiones pagadas.
+• Las sanciones son registradas en el expediente académico del estudiante.
+10.3 Reglamento de Sistemas Informáticos (REC-RG009)
+• Uso obligatorio del correo institucional UTP para trámites académicos.
+• Prohibida la compartición de cuentas y contraseñas del sistema.
+• Prohibido el acceso a contenidos inapropiados mediante la red UTP.
+• Prohibido el envío de spam o mensajes masivos no autorizados.
+• Infracciones informáticas se califican como graves y pueden conllevar suspensión.
+11. SERVICIOS AL ESTUDIANTE
+11.1 SAE – Soporte Académico Estudiantil
+El SAE es el servicio central de atención al estudiante, presente en todos los campus. Funciones principales:
+• Matrícula, retiro de cursos y reincorporación
+• Expedición de certificados, constancias y documentos académicos
+• Orientación académica y manejo de inconformidades
+• Procesamiento de convalidaciones
+• Atención de reclamos y apelaciones académicas
+• Tramitación de becas y descuentos
+Horarios SAE Lima: Lunes a viernes hasta las 10:00 p.m. – Sábados según campus. Cada filial tiene horario
+propio.
+11.2 Plataformas Digitales
+Plataforma
+Función
+UTP+ Portal (web)
+Matrícula, consulta de notas, horarios, pagos, trámites en línea
+App UTP+
+Versión móvil del portal. Notificaciones, horarios, notas en tiempo real
+UTP+ Class
+Plataforma de aprendizaje virtual (Canvas). Materiales de clase, evaluaciones, foros
+UTP+ Info (info.utp.edu.pe)
+Información institucional, FAQs, guías, novedades
+Correo institucional (@utp.edu.pe)
+Canal oficial obligatorio para trámites y comunicaciones académicas
+Repositorio Institucional
+Acceso a tesis, artículos y producción académica UTP
+Catálogo Biblioteca en línea
+Búsqueda de libros físicos y digitales en todos los campus
+Portal de Empleabilidad
+empleabilidad.utp.edu.pe – Ofertas laborales y prácticas exclusivas
+Simulador de Convalidaciones
+Estimación en línea de créditos transferibles de otras instituciones
+Resultados de Admisión
+resultadosadmision.utp.edu.pe
+11.3 Biblioteca y Recursos Académicos
+• Bibliotecas físicas en los 15 campus con colecciones actualizadas.
+• Acceso remoto a bases de datos académicas (Scopus, WoS, entre otras).
+• Más de 400 laboratorios y simuladores especializados a nivel nacional.
+• Laboratorios destacados: Mecatrónica y Robótica, Hospital Simulado, Estudios Ambientales, Televisión HD,
+Procesos Industriales, Hidráulica, Comunicaciones Móviles, Construcción de Vehículos, Tecnología del
+Concreto.
+11.4 Bienestar Estudiantil
+• Atención psicológica gratuita individual y grupal (servicio de consejería).
+• Talleres de manejo de estrés y salud mental.
+• Asesorías sociales para situaciones especiales (socioeconómicas, familiares).
+• Actividades deportivas: equipos por disciplina con entrenadores profesionales.
+• Centro Cultural UTP: talleres artísticos, música, danza, teatro.
+• Cafeterías en todos los campus.
+• Seguro estudiantil: póliza básica incluida en matrícula (convenios con clínicas).
+11.5 Empleabilidad y Bolsa de Trabajo
+• Portal de Empleabilidad: ofertas laborales exclusivas para estudiantes y egresados.
+• Ferias de empleo anuales (presenciales y virtuales) organizadas por la universidad.
+• Programa intensivo de liderazgo, empleabilidad e innovación.
+• Asesores de carrera personalizados en cada campus.
+• Incubadora de startups y programa para ideas de negocio.
+• Convenios con: Deloitte (empleabilidad y prácticas), Tata Consultancy Services – TCS (tecnología),
+empresas del Grupo Intercorp (bolsa interna), instituciones públicas y privadas diversas.
+• Convenios de intercambio estudiantil internacional: UC Berkeley, Universidad de Alcalá, Universidad de La
+Rioja, Istituto Europeo di Design (IED), Universidad de Le Havre, Universidad de Tarapacá, Universidad
+Pontificia Bolivariana, entre otras.
+12. CALIDAD, ACREDITACIONES Y CERTIFICACIONES
+Certificación / Acreditación
+Alcance
+Estado
+SUNEDU – Licencia Institucional Toda la universidad (sede + 7 filiales)
+Vigente (otorgada 2019; en proceso de renovación 2025-2026)
+ACBSP (Accreditation Council for Business Schools & Programs)
+Escuela de Postgrado – programas de negocios / MBA
+Vigente
+GAC (Global Accreditation Center – PMI)
+Escuela de Postgrado – maestrías de gestión de proyectos
+Vigente
+ISO 9001:2015
+Programa de Ingeniería Marítima
+Vigente
+Título de Oficial de Marina Mercante
+Ingeniería Marítima (única universidad privada con este título)
+Vigente – reconocido por Autoridad Marítima Nacional
+CATI – Centro de Apoyo Tecnología e Innovación
+Toda la comunidad universitaria – apoyo en patentes (convenio INDECOPI)
+Activo
+12.1 Sobre la Renovación de Licencia SUNEDU
+La licencia inicial fue otorgada en junio de 2019 por 6 años. Conforme a la RCD N° 091-2021-SUNEDU/CD y la
+disposición transitoria, las universidades pueden solicitar la renovación hasta 2 años después del vencimiento
+operando normalmente durante ese período. La UTP inició su proceso de renovación. La renovación puede
+otorgarse de 6 a 10 años según desempeño.
+13. CONVENIOS E INTERNACIONALIZACIÓN
+13.1 Convenios Académicos Internacionales
+Universidad / Institución
+País
+University of California Berkeley
+Estados Unidos
+University at Buffalo (SUNY)
+Estados Unidos
+Universidad de Le Havre
+Francia
+Istituto Europeo di Design (IED)
+Italia
+Universidad de Alcalá
+España
+Universidad de La Rioja
+España
+Universidad de La Laguna
+España
+Universidad Tecnológica de La Habana José Antonio Echeverría (CUJAE)
+Cuba
+Universidad de Tarapacá
+Chile
+Universidad Pontificia Bolivariana
+Colombia
+Universidad Central
+Colombia
+Panamericana Televisión (convenio educativo)
+Perú (convenio especial)
+13.2 Convenios Empresariales
+• Tata Consultancy Services (TCS) – Cursos y talleres en TI
+• Deloitte – Preparación para procesos de reclutamiento y prácticas preprofesionales
+• Empresas del Grupo Intercorp – Bolsa de trabajo interna y descuentos
+• Toyota del Perú – Eventos de innovación (sede Ica)
+• SUNAT – Prácticas pre-profesionales y empleabilidad
+• Fuerzas Armadas y Policía Nacional del Perú – Ingresos y descuentos
+14. PROCEDIMIENTOS Y TRÁMITES FRECUENTES
+14.1 Apelación de Nota
+• 1. Revisar la calificación directamente con el docente del curso.
+• 2. Si persiste la discrepancia, redactar una solicitud escrita dirigida al Director Académico.
+• 3. Indicar: nombre, DNI, carrera, ciclo, asignatura, sección, nota impugnada y fundamentos.
+• 4. Adjuntar evidencias: trabajos, exámenes, rúbricas o cualquier documento de respaldo.
+• 5. Entregar en la oficina SAE dentro del plazo (generalmente pocos días hábiles tras la publicación de
+notas).
+• 6. Esperar la resolución de la comisión evaluadora (puede incluir revisión por docente externo).
+14.2 Apelación de Sanción Disciplinaria
+• 1. Redactar escrito dirigido al Rector o Consejo Universitario citando el Reglamento de Disciplina.
+• 2. Fundamentar por qué se considera injusta la sanción, con referencias a artículos del reglamento.
+• 3. Incluir datos del proceso: fecha de infracción, descripción de hechos, testigos si los hay.
+• 4. Presentar el recurso ante el Comité de Apelaciones en el plazo que fije el reglamento interno.
+• 5. La Comisión revisará el caso y emitirá resolución formal.
+14.3 Plantilla de Carta Formal
+Ciudad y fecha
+Señor Rector
+Universidad Tecnológica del Perú – Sede [Nombre]
+Asunto: [Apelación de nota / Apelación disciplinaria / Reclamo académico]
+Por medio de la presente, yo, [Nombre completo] con DNI N° [XXXXXXXX], estudiante de la carrera de [Carrera], ciclo [N°], s
+Solicito se rectifique lo actuado conforme a la normativa interna. Adjunto la documentación de respaldo.
+Sin otro particular, quedo a la espera de su resolución.
+Atentamente,
+[Firma manuscrita o digital]
+[Nombre completo] – Cód. Est. [XXXXXX] – DNI [XXXXXXXX]
+14.4 Cómo Citar Reglamentos UTP
+Formato estándar para citar reglamentos en trabajos o solicitudes:
+"Según el Reglamento de Estudios de Pregrado de la UTP (REC-RG005), Artículo 27: 'Las asignaturas
+reprobadas tendrán prioridad en la matrícula'."
+Siempre se debe indicar: nombre del reglamento, código (ej. REC-RG005), número de artículo y texto literal
+entre comillas.
+15. PREGUNTAS FRECUENTES (FAQ)
+P1: ¿Qué es la UTP?
+R: La Universidad Tecnológica del Perú (UTP) es una universidad privada peruana fundada el 8 de septiembre
+de 1997, actualmente propiedad del Grupo Intercorp. Es la universidad privada con mayor cantidad de
+estudiantes matriculados en Lima (~96,364 alumnos) y cuenta con 15 campus a nivel nacional.
+P2: ¿Está acreditada la UTP por SUNEDU?
+R: La UTP tiene licencia institucional otorgada por SUNEDU en junio de 2019 por 6 años. No existe
+'acreditación' nacional en Perú; solo licencias. La UTP cumple con todas las Condiciones Básicas de Calidad
+(CBC) exigidas. Actualmente está en proceso de renovación de licencia.
+P3: ¿Cuáles son los requisitos para ingresar?
+R: Haber concluido la educación secundaria. Según la modalidad: examen de admisión (preferencial o regular),
+tercio superior, promedio de 14+ en 4to y 5to de secundaria (ingreso directo), traslado externo (mínimo 72
+créditos aprobados), evaluación de documentos (titulados con 3+ años de experiencia), o modalidades
+especiales (FFAA, PNP, deportistas, bachillerato internacional).
+P4: ¿Cuánto cuesta estudiar en la UTP en 2026?
+R: La inscripción cuesta S/ 450. La matrícula varía entre S/ 315 y S/ 845. Las pensiones mensuales oscilan
+entre S/ 465 (pocos créditos, carreras generales) y S/ 1,100 (máximo de créditos, Farmacia). Medicina Humana
+puede llegar a S/ 1,400-2,800 mensuales. En provincias es generalmente más económico (~S/ 550-700
+mensuales).
+P5: ¿Qué becas ofrece la UTP?
+R: Becas internas: socioeconómica (10%-50%), orfandad (10%-100%), discapacidad (10%-25%), excelencia
+académica ingreso (10%-50%), excelencia en carrera (hasta 20%), descuento hermanos. Becas estatales:
+Beca COAR (100% integral para egresados COAR), Beca 18 PRONABEC. Convenios: 20% personal Intercorp,
+descuentos FFAA/PNP.
+P6: ¿Cuáles son las mejores carreras de la UTP?
+R: Por empleabilidad destacan Ingeniería Industrial, Ingeniería de Sistemas e Informática, Administración de
+Empresas, Derecho y Psicología. En investigación, la UTP es líder nacional (N°1 SCImago) en Ingeniería y
+Computación. Ingeniería Marítima es única en otorgar título de Oficial de Marina Mercante a nivel privado.
+P7: ¿Cuánto dura una carrera de pregrado?
+R: Generalmente 10 a 12 semestres (5 a 6 años), según la carrera y el plan de estudios. Medicina Humana
+puede tener duración mayor. Las maestrías duran 18-24 meses y los doctorados ≈ 3-4 años.
+P8: ¿Cómo me matriculo?
+R: A través del portal UTP+ Portal (web) o la App UTP+. Primero debes pagar el derecho de matrícula y el
+seguro estudiantil. Luego registras las asignaturas dentro del plazo del calendario académico. Debes priorizar
+cursos reprobados antes de avanzar a niveles superiores.
+P9: ¿Puedo convalidar cursos de otra universidad?
+R: Sí. La UTP revisa el historial académico previo para convalidar asignaturas equivalentes. Existe un
+Simulador de Convalidaciones en línea para estimar cuántos créditos se transfieren. El trámite formal se solicita
+al SAE antes de la matrícula, con certificados de notas originales.
+P10: ¿Qué pasa si repruebo un curso?
+R: Debes volver a matricularlo en el siguiente ciclo con carácter prioritario (Art. 27 Reglamento de Estudios). No
+pierdes el año académico; simplemente no avanzas hasta aprobar los créditos requeridos. Puedes solicitar
+revisión de nota ante el SAE dentro del plazo establecido.
+P11: ¿Qué necesito para graduarme?
+R: Para el bachillerato: completar todos los créditos del plan de estudios. Para el título profesional: tener el
+grado de bachiller + elaborar, sustentar y aprobar una tesis (formato tradicional o artículo científico para revista
+indexada) o en algunos casos trabajo especial.
+P12: ¿Hay modalidad virtual 100%?
+R: Sí. La UTP ofrece modalidad 100% virtual con clases grabadas y materiales digitales disponibles durante
+todo el ciclo. También existe la modalidad semipresencial (mix) y la CGT (fines de semana/noches) para
+trabajadores.
+P13: ¿Qué es el SAE?
+R: SAE es el Soporte Académico Estudiantil. Atiende matrícula, certificados, constancias, trámites de admisión,
+reingreso, convalidaciones, becas y reclamos. Cada campus tiene una oficina SAE. Horario Lima: L-V hasta las
+10 pm.
+P14: ¿Dónde consulto mis notas y horarios?
+R: En UTP+ Portal (web) o la App UTP+. Los docentes publican notas progresivamente durante el ciclo.
+También recibes notificaciones al correo institucional.
+P15: ¿Tiene intercambios internacionales?
+R: Sí. La UTP tiene convenios con UC Berkeley, Universidad de Alcalá, Istituto Europeo di Design, Universidad
+de Le Havre, Universidad Pontificia Bolivariana y otras universidades. Estudiantes destacados pueden acceder
+a estancias de intercambio.
+P16: ¿Qué convenios empresariales tiene la UTP?
+R: Deloitte (empleabilidad y prácticas), Tata Consultancy Services (TI), empresas Intercorp (bolsa interna),
+Toyota, SUNAT, entre otras. Además tiene convenios con instituciones públicas para prácticas
+preprofesionales en sectores de salud, ingeniería y gestión.
+P17: ¿Cómo pago mis pensiones?
+R: Mediante banca en línea (Interbank, BBVA, BCP, Scotiabank, entre otros), agentes bancarios autorizados o
+plataforma UTP+ App/Portal. Desde 2022 Interbank no acepta pagos en ventanilla. El retraso genera intereses
+y puede bloquear acceso al sistema.
+P18: ¿Qué es el Instituto de Inglés UTP?
+R: Es un programa integrado en la universidad que ofrece 6 niveles de inglés (básico a avanzado), cada uno de
+6 meses. No tiene costo adicional para estudiantes UTP. Al completarlo se puede acreditar el idioma para
+requisitos de grado.
+P19: ¿Tiene servicio psicológico?
+R: Sí. El servicio de Bienestar Estudiantil ofrece atención psicológica gratuita individual y grupal, talleres de
+manejo de estrés y asesorías sociales. Disponible en todos los campus.
+P20: ¿Cuándo hay exámenes de admisión?
+R: Hay dos convocatorias principales al año: Ciclo I (marzo) con exámenes entre septiembre-febrero, y Ciclo II
+(agosto) con exámenes entre abril-julio. También hay ciclo verano (enero). Los resultados se publican en
+resultadosadmision.utp.edu.pe.
+16. REPUTACIÓN, CONTROVERSIAS Y CONTEXTO
+16.1 Percepción Pública
+• La UTP es reconocida por su enfoque práctico, convenios laborales y acceso masivo a educación superior.
+• Estudiantes resaltan modernidad de campus, laboratorios equipados y acceso a prácticas tempranas.
+• Críticas frecuentes: procesos administrativos lentos, incrementos de pensiones, carga burocrática.
+• En empleabilidad, estudios externos estiman inserción laboral del 30-40% de egresados al egresar, por
+encima de la media privada nacional.
+16.2 Controversias Documentadas
+Caso
+Descripción
+Estado
+Multa SUNEDU por filial Chiclayo (2018)
+La UTP operaba en Chiclayo sin autorización durante el proceso de licenciamiento. Fue multada con S/ 708,7
+Resuelto
+Denuncia ante INDECOPI por UCV (2022-2023)
+La Universidad César Vallejo denunció a la UTP por usar los términos 'UCV' y 'Universidad César Vallejo' com
+Sin resolución pública confirmada
+16.3 Posición en el Sistema Universitario Peruano
+• La UTP no aparece en el top 10 de universidades privadas del Ranking SUNEDU 2025 (IV Informe Bienal
+2021-2022).
+• Destaca ampliamente en el Ranking SCImago por producción científica, especialmente en Ingeniería (N°1
+nacional en 2024).
+• Su reputación es sólida en el ámbito técnico-práctico y creciente en investigación.
+• Como universidad Intercorp, tiene respaldo financiero significativo que facilita inversión en infraestructura y
+tecnología.
+17. CANALES DE PAGO Y CONTACTO
+17.1 Canales de Pago Disponibles
+Canal
+Disponibilidad
+Banca en línea BCP
+Disponible
+Banca en línea Interbank
+Disponible (sin pagos en ventanilla desde 2022)
+Banca en línea BBVA
+Disponible
+Banca en línea Scotiabank
+Disponible (5% descuento adicional)
+Agentes bancarios (BCP, Interbank, etc.)
+Disponible
+App UTP+
+Disponible – pago integrado en la plataforma
+UTP+ Portal (web)
+Disponible
+Ventanilla de bancos
+Solo algunos bancos; Interbank eliminó esta opción en 2022
+17.2 Contactos Institucionales
+Área
+Contacto
+Admisión Lima
+(01) 315-9610
+Admisión Provincias (gratuita)
+0801-19-610
+SAE Lima
+(01) 315-9600
+SAE Provincias (gratuita)
+0801-19-600
+Web oficial
+www.utp.edu.pe
+Portal información
+info.utp.edu.pe
+Resultados admisión
+resultadosadmision.utp.edu.pe
+Portal de transparencia
+www.utp.edu.pe/web/transparencia
+Empleabilidad
+empleabilidad.utp.edu.pe
+Postgrado
+www.postgradoutp.edu.pe
+18. NOTAS FINALES Y FUENTES
+18.1 Instrucciones para el Asistente de IA (UTPBot)
+Este documento ha sido compilado para alimentar el motor de conocimiento de UTPBot, el asistente académico
+virtual de la UTP. El asistente debe:
+• Responder preguntas sobre admisión, matrícula, carreras, costos, becas y servicios con base en este
+documento.
+• Siempre recomendar al usuario consultar el SAE o el portal oficial (info.utp.edu.pe) para información oficial,
+actualizada y específica a su caso.
+• Indicar cuando una pregunta requiere verificación oficial, especialmente en costos, plazos y normativas que
+cambian cada ciclo.
+• Dirigir al usuario al portal de transparencia para acceder a reglamentos completos.
+• Nunca afirmar montos exactos de pensiones sin recomendar su verificación en la Guía del Estudiante del
+ciclo vigente.
+18.2 Fuentes Consultadas
+Fuente
+URL / Referencia
+Web oficial UTP
+www.utp.edu.pe
+Portal de Transparencia UTP
+www.utp.edu.pe/web/transparencia
+UTP+ Info
+info.utp.edu.pe
+SUNEDU – Licenciamiento UTP
+www.sunedu.gob.pe
+Wikipedia – UTP (actualizado 2025)
+es.wikipedia.org
+Intercorp – Noticias SCImago 2024
+www.intercorp.com.pe
+La República – Matrículas Lima 2023-2024larepublica.pe
+RPP / Infobae – Ranking SUNEDU 2025 rpp.pe / infobae.com/peru
+Universidades Perú Info – Pensiones 2026universidadesperu.info
+Gestión – Caso UCV vs UTP Indecopi
+gestion.pe
+Reglamento de Estudios Pregrado V11
+utp.edu.pe/transparencia
+Reglamento de Grados y Títulos V09
+utp.edu.pe/transparencia
+Guía del Estudiante Lima Sur Verano 2026Studocu / UTP DPA-GU0664
+SCImago Institutions Rankings 2024-2026www.scimagoir.com
+Nota de vigencia: Este documento fue compilado en abril de 2026. Algunos datos (pensiones, reglamentos, rankings)
+pueden actualizarse cada ciclo académico. Para información oficial y vigente consultar directamente en los portales
+institucionales de la UTP y SUNEDU.
+Documento generado por UTPBot Knowledge Compiler · Anthropic Claude · Abril 2026
