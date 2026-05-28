@@ -7,7 +7,7 @@
 // ─── Config ──────────────────────────────────────────────────────────
 const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   ? 'http://localhost:8000'
-  : 'https://your-backend.railway.app';  // ← Actualizar con URL real en producción
+  : 'https://web-production-e2e70.up.railway.app';  // ← Actualizar con URL real en producción
 
 const REFRESH_INTERVAL_MS = 60_000; // Auto-refresh cada 60 segundos
 

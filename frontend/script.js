@@ -4,7 +4,7 @@
 // API URL — local en desarrollo, producción en deploy
 const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
   ? 'http://127.0.0.1:8000'
-  : 'https://your-backend.railway.app'; // ← Actualizar con URL real del backend
+  : 'https://web-production-e2e70.up.railway.app'; // ← Actualizar con URL real del backend
 let session = null;
 let historialActual = []; // Mensajes de la sesión activa
 let historialGlobal = []; // Todas las conversaciones anteriores guardadas
@@ -738,7 +738,7 @@ function _crearRecognition() {
 
     if (trimmedText) {
       displayEl.textContent = trimmedText;
-      
+
       // Si hay un texto válido, esperamos a que el usuario deje de hablar
       silenceTimer = setTimeout(() => {
         isProcessingVoice = true;  // LOCK: bloquear nuevas capturas
@@ -787,7 +787,7 @@ function startVoiceMode() {
 
   // Asegurarse de cerrar cualquier sesión previa
   if (recognition) {
-    try { recognition.abort(); } catch (e) {}
+    try { recognition.abort(); } catch (e) { }
     recognition = null;
   }
   synthesis.cancel();
@@ -816,7 +816,7 @@ function stopVoiceMode() {
   synthesis.cancel();
 
   if (recognition) {
-    try { recognition.abort(); } catch (e) {}
+    try { recognition.abort(); } catch (e) { }
     recognition = null;
   }
 
@@ -862,7 +862,7 @@ async function sendMessageFromVoice() {
   // Detener el reconocimiento mientras procesamos
   isBotSpeaking = true;
   if (recognition) {
-    try { recognition.abort(); } catch (e) {}
+    try { recognition.abort(); } catch (e) { }
   }
 
   setVoiceUIState('processing');
@@ -903,20 +903,20 @@ async function sendMessageFromVoice() {
 
 function _reanudarEscucha() {
   if (!isVoiceModeActive) return;
-  
+
   // Forzar reseteo de estados
   isBotSpeaking = false;
   isProcessingVoice = false;
-  
+
   setVoiceUIState('listening');
   const transcriptEl = document.getElementById('voice-transcript');
   if (transcriptEl) {
     transcriptEl.textContent = currentLang === 'es' ? 'Escuchando...' : 'Listening...';
   }
-  
+
   // Crear nuevo recognition si es necesario
   if (recognition) {
-    try { recognition.abort(); } catch (e) {}
+    try { recognition.abort(); } catch (e) { }
   }
   recognition = _crearRecognition();
   setTimeout(_startListening, 150);
@@ -954,19 +954,19 @@ function speakResponse(markdownText) {
   utterance.pitch = 1.05;
 
   // Evitar acentos argentinos (es-AR) y preferir Perú (es-PE), México (es-MX) o neutro
-  const availableVoices = synthesis.getVoices().filter(v => 
+  const availableVoices = synthesis.getVoices().filter(v =>
     v.lang.startsWith(currentLang === 'es' ? 'es' : 'en') && !v.lang.includes('AR')
   );
 
   // 1. Buscar voces de Perú o México explícitamente que sean Premium/Online
-  let bestVoice = availableVoices.find(v => 
-    (v.lang.includes('PE') || v.lang.includes('MX')) && 
+  let bestVoice = availableVoices.find(v =>
+    (v.lang.includes('PE') || v.lang.includes('MX')) &&
     (v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Premium'))
   );
 
   // 2. Buscar cualquier voz Premium, Natural u Online (sin acento argentino)
   if (!bestVoice) {
-    bestVoice = availableVoices.find(v => 
+    bestVoice = availableVoices.find(v =>
       v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Premium')
     );
   }
