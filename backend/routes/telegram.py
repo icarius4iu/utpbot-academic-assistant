@@ -53,7 +53,7 @@ async def telegram_webhook(request: Request, background_tasks: BackgroundTasks):
     return {"ok": True}
 
 
-@router.post("/setup-webhook")
+@router.api_route("/setup-webhook", methods=["GET", "POST"])
 async def configurar_webhook():
     """
     Configura el webhook de Telegram apuntando a este servidor.
