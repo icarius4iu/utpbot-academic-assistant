@@ -151,24 +151,38 @@ class SheetsService:
     def _conectar(self):
         """Establece conexión con Google Sheets si no está conectado."""
         if self._client is None:
-            creds_file = os.getenv("GOOGLE_CREDENTIALS_FILE", "credentials.json")
             spreadsheet_id = os.getenv("SPREADSHEET_ID", "")
-
-            if not os.path.exists(creds_file):
-                raise FileNotFoundError(
-                    f"No se encontró el archivo de credenciales: {creds_file}. "
-                    "Descarga el archivo JSON de tu cuenta de servicio de Google Cloud."
-                )
-
-            credentials = Credentials.from_service_account_file(creds_file, scopes=SCOPES)
-            self._client = gspread.authorize(credentials)
-
-            if spreadsheet_id:
-                self._spreadsheet = self._client.open_by_key(spreadsheet_id)
-            else:
+            if not spreadsheet_id:
                 raise ValueError(
                     "SPREADSHEET_ID no está configurado en el archivo .env"
                 )
+
+            # 1. Intentar cargar credenciales desde variable de entorno JSON (Recomendado para Producción/Railway)
+            creds_json = os.getenv("GOOGLE_CREDENTIALS_JSON", "")
+            if creds_json:
+                try:
+                    info = json.loads(creds_json)
+                    credentials = Credentials.from_service_account_info(info, scopes=SCOPES)
+                    self._client = gspread.authorize(credentials)
+                    self._spreadsheet = self._client.open_by_key(spreadsheet_id)
+                    return
+                except Exception as e:
+                    print(f"[ERROR] Error al cargar credenciales desde GOOGLE_CREDENTIALS_JSON: {e}")
+
+            # 2. Fallback a archivo físico local (Desarrollo)
+            creds_file = os.getenv("GOOGLE_CREDENTIALS_FILE", "credentials.json")
+            actual_creds_file = creds_file
+            if not os.path.exists(actual_creds_file) and os.path.exists(os.path.join("backend", creds_file)):
+                actual_creds_file = os.path.join("backend", creds_file)
+
+            if not os.path.exists(actual_creds_file):
+                raise FileNotFoundError(
+                    f"No se encontró el archivo de credenciales: {creds_file} ni la variable de entorno GOOGLE_CREDENTIALS_JSON."
+                )
+
+            credentials = Credentials.from_service_account_file(actual_creds_file, scopes=SCOPES)
+            self._client = gspread.authorize(credentials)
+            self._spreadsheet = self._client.open_by_key(spreadsheet_id)
 
     def _obtener_hoja(self, nombre_hoja: str) -> gspread.Worksheet:
         """Obtiene una hoja específica del spreadsheet."""
