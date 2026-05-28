@@ -45,7 +45,7 @@ def _get_client() -> genai.Client:
                 "Ve a https://aistudio.google.com/app/apikey para obtener tu key."
             )
         _client = genai.Client(api_key=GEMINI_API_KEY)
-        print("✅ Cliente Gemini (google-genai SDK) inicializado.")
+        print("[OK] Cliente Gemini (google-genai SDK) inicializado.")
     return _client
 
 
@@ -63,7 +63,7 @@ def _extraer_texto_docx(file_bytes: bytes) -> str:
                     parrafos.append(fila)
         return "\n".join(parrafos)
     except Exception as e:
-        print(f"⚠️ Error extrayendo DOCX: {e}")
+        print(f"[WARN] Error extrayendo DOCX: {e}")
         return "(No se pudo extraer el contenido del documento Word)"
 
 
@@ -88,7 +88,7 @@ def _extraer_texto_xlsx(file_bytes: bytes) -> str:
         wb.close()
         return "\n".join(resultado)
     except Exception as e:
-        print(f"⚠️ Error extrayendo XLSX: {e}")
+        print(f"[WARN] Error extrayendo XLSX: {e}")
         return "(No se pudo extraer el contenido del archivo Excel)"
 
 
@@ -105,7 +105,7 @@ def _extraer_texto_pdf(file_bytes: bytes) -> str:
         doc.close()
         return "\n".join(partes)
     except Exception as e:
-        print(f"⚠️ Error extrayendo PDF con PyMuPDF: {e}")
+        print(f"[WARN] Error extrayendo PDF con PyMuPDF: {e}")
         return ""
 
 
@@ -154,27 +154,27 @@ class GeminiService:
                 texto = response.text.strip()
                 respuesta_limpia = self._limpiar_respuesta(texto)
                 sugerencias = self._extraer_sugerencias(texto)
-                print(f"✅ Respuesta con: {nombre}")
+                print(f"[OK] Respuesta con: {nombre}")
                 return respuesta_limpia, sugerencias
 
             except Exception as e:
                 err = str(e)
                 ultimo_error = err
                 if "429" in err or "quota" in err.lower() or "rate" in err.lower():
-                    print(f"⚠️ Cuota agotada en '{nombre}', probando siguiente...")
+                    print(f"[WARN] Cuota agotada en '{nombre}', probando siguiente...")
                     time.sleep(1)
                     continue
                 elif "404" in err or "not found" in err.lower():
-                    print(f"⚠️ Modelo '{nombre}' no disponible, probando siguiente...")
+                    print(f"[WARN] Modelo '{nombre}' no disponible, probando siguiente...")
                     continue
                 elif "503" in err or "unavailable" in err.lower() or "demand" in err.lower() or "500" in err:
-                    print(f"⚠️ Modelo '{nombre}' sobrecargado (503), probando siguiente...")
+                    print(f"[WARN] Modelo '{nombre}' sobrecargado (503), probando siguiente...")
                     continue
                 else:
-                    print(f"❌ Error en '{nombre}': {e}")
+                    print(f"[ERROR] Error en '{nombre}': {e}")
                     continue # Siempre intentar otro modelo si hay error
 
-        print(f"❌ Todos los modelos fallaron. Último: {ultimo_error}")
+        print(f"[ERROR] Todos los modelos fallaron. Último: {ultimo_error}")
 
         if "429" in str(ultimo_error) or "quota" in str(ultimo_error).lower():
             msg = (
@@ -264,7 +264,7 @@ class GeminiService:
                     )
 
             except Exception as e:
-                print(f"❌ Error procesando archivo adjunto: {e}")
+                print(f"[ERROR] Error procesando archivo adjunto: {e}")
                 texto_doc_extraido = f"(Error al procesar el archivo: {e})"
 
         # Construir el texto del mensaje final

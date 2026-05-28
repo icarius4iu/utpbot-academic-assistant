@@ -345,7 +345,7 @@ class SheetsService:
                     "calendario": self.obtener_calendario("estudiantes")
                 }
         except Exception as e:
-            print(f"⚠️ Sheets no disponible, usando datos demo para {codigo}: {e}")
+            print(f"[WARN] Sheets no disponible, usando datos demo para {codigo}: {e}")
 
         return DEMO_DATOS_ESTUDIANTE.get(codigo, {})
 
@@ -366,7 +366,7 @@ class SheetsService:
                     "calendario": self.obtener_calendario("docentes")
                 }
         except Exception as e:
-            print(f"⚠️ Sheets no disponible, usando datos demo para {codigo}: {e}")
+            print(f"[WARN] Sheets no disponible, usando datos demo para {codigo}: {e}")
 
         return DEMO_DATOS_DOCENTE.get(codigo, {})
 
