@@ -707,7 +707,7 @@ let isVoiceModeActive = false;
 let isBotSpeaking = false;
 let isProcessingVoice = false; // Lock anti-duplicados
 let silenceTimer = null; // Temporizador de silencio
-let synthesis = window.speechSynthesis;
+let synthesis = window.speechSynthesis || null;
 
 function _crearRecognition() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -715,37 +715,39 @@ function _crearRecognition() {
 
   const rec = new SpeechRecognition();
   rec.lang = currentLang === 'es' ? 'es-ES' : 'en-US';
-  rec.continuous = true;      // Continuar escuchando para permitir pausas
-  rec.interimResults = true;
-
-  // Almacenar el texto acumulado
-  let textoAcumulado = '';
+  rec.continuous = false;     // Usar detección de silencio nativa del navegador para mayor robustez
+  rec.interimResults = true;  // Mostrar resultados preliminares en tiempo real
 
   rec.onresult = (event) => {
-    // Si ya estamos procesando o el bot habla, ignorar
     if (isBotSpeaking || isProcessingVoice) return;
 
-    // Reiniciar el temporizador en cada palabra nueva
-    clearTimeout(silenceTimer);
+    let interimTranscript = '';
+    let finalTranscript = '';
 
-    let fullTranscript = '';
-    for (let i = 0; i < event.results.length; ++i) {
-      fullTranscript += event.results[i][0].transcript;
+    for (let i = event.resultIndex; i < event.results.length; ++i) {
+      if (event.results[i].isFinal) {
+        finalTranscript += event.results[i][0].transcript;
+      } else {
+        interimTranscript += event.results[i][0].transcript;
+      }
     }
 
     const displayEl = document.getElementById('voice-transcript');
-    const trimmedText = fullTranscript.trim();
+    const textToShow = finalTranscript || interimTranscript;
 
-    if (trimmedText) {
-      displayEl.textContent = trimmedText;
+    if (displayEl && textToShow.trim()) {
+      displayEl.textContent = textToShow.trim();
+    }
 
-      // Si hay un texto válido, esperamos a que el usuario deje de hablar
-      silenceTimer = setTimeout(() => {
-        isProcessingVoice = true;  // LOCK: bloquear nuevas capturas
-        rec.stop();                // Detener escucha manualmente
-        document.getElementById('chat-input').value = trimmedText;
+    // Cuando el navegador detecte que el usuario ha terminado la frase de forma nativa
+    if (finalTranscript.trim()) {
+      isProcessingVoice = true;  // LOCK
+      document.getElementById('chat-input').value = finalTranscript.trim();
+      
+      // Esperar un instante para que el usuario vea su texto final en pantalla y luego enviar
+      setTimeout(() => {
         sendMessageFromVoice();
-      }, 1000); // 1.0 segundos de pausa para mayor velocidad y fluidez
+      }, 500);
     }
   };
 
@@ -755,25 +757,21 @@ function _crearRecognition() {
 
     if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
       alert(currentLang === 'es'
-        ? 'Permiso de micrófono denegado. Actívalo en la configuración del navegador (clic en el candado de la barra de direcciones).'
-        : 'Microphone permission denied. Enable it in your browser settings (click the lock icon in the address bar).');
+        ? 'Permiso de micrófono denegado o no disponible. Actívalo en la configuración del navegador (clic en el candado de la barra de direcciones).'
+        : 'Microphone permission denied or not available. Enable it in your browser settings (click the lock icon in the address bar).');
       stopVoiceMode();
     } else if (event.error === 'network') {
       if (transcriptEl) transcriptEl.textContent = currentLang === 'es'
         ? 'Error de red. Reintentando...' : 'Network error. Retrying...';
-      // Chrome usa servidores de Google para procesar voz, necesita conexión
     } else if (event.error === 'no-speech') {
-      if (transcriptEl) transcriptEl.textContent = currentLang === 'es'
-        ? 'No se detectó voz. Habla cerca del micrófono...' : 'No speech detected. Speak closer to the mic...';
-    } else if (event.error === 'aborted') {
-      // Aborted es normal cuando nosotros detenemos manualmente, ignorar
+      // no-speech es normal si el usuario tarda en hablar; el navegador detiene la escucha automáticamente
     }
   };
 
   rec.onend = () => {
-    // Solo reiniciar si el modo voz sigue activo Y no estamos bloqueados
+    // Si no se capturó nada final y el modo voz sigue activo, volver a iniciar la escucha automáticamente
     if (isVoiceModeActive && !isBotSpeaking && !isProcessingVoice) {
-      _startListening();
+      setTimeout(_startListening, 300);
     }
   };
 
@@ -811,7 +809,9 @@ function startVoiceMode() {
     try { recognition.abort(); } catch (e) { }
     recognition = null;
   }
-  synthesis.cancel();
+  if (synthesis) {
+    try { synthesis.cancel(); } catch (e) { }
+  }
 
   recognition = _crearRecognition();
   isVoiceModeActive = true;
@@ -835,7 +835,9 @@ function stopVoiceMode() {
   isProcessingVoice = false;
   clearTimeout(silenceTimer);
 
-  synthesis.cancel();
+  if (synthesis) {
+    try { synthesis.cancel(); } catch (e) { }
+  }
 
   if (recognition) {
     try { recognition.abort(); } catch (e) { }
@@ -949,7 +951,9 @@ function speakResponse(markdownText) {
   if (!isVoiceModeActive) return;
 
   // Cancelar cualquier síntesis pendiente ANTES de hablar
-  synthesis.cancel();
+  if (synthesis) {
+    try { synthesis.cancel(); } catch (e) { }
+  }
 
   // Limpiar markdown
   let plainText = markdownText
@@ -1034,12 +1038,19 @@ function speakResponse(markdownText) {
   const safetyTimer = setTimeout(() => {
     if (isBotSpeaking && isVoiceModeActive) {
       console.warn('Synthesis safety timer fired');
-      synthesis.cancel();
+      if (synthesis) {
+        try { synthesis.cancel(); } catch (e) { }
+      }
       _reanudarEscucha();
     }
   }, duracionEstimada + 2000);
 
-  synthesis.speak(utterance);
+  if (synthesis) {
+    try { synthesis.speak(utterance); } catch (e) { }
+  } else {
+    // Si no hay motor de síntesis de voz, reanudar escucha directamente
+    setTimeout(_reanudarEscucha, 2000);
+  }
 }
 
 // Cargar voces disponibles al inicio (algunas las carga asíncronamente)
