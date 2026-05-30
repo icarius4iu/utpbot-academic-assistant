@@ -799,24 +799,10 @@ function _startListening() {
   }
 }
 
-async function startVoiceMode() {
+function startVoiceMode() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
     alert('Tu navegador no soporta el reconocimiento de voz. Usa Google Chrome o Microsoft Edge.');
-    return;
-  }
-
-  // Chrome requiere solicitar permisos de micrófono EXPLÍCITAMENTE
-  // antes de poder usar SpeechRecognition. Edge lo maneja internamente.
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    // Liberar el stream inmediatamente, solo necesitábamos el permiso
-    stream.getTracks().forEach(track => track.stop());
-  } catch (micError) {
-    console.error('Microphone permission error:', micError);
-    alert(currentLang === 'es'
-      ? 'No se pudo acceder al micrófono. Verifica que el permiso esté habilitado en la configuración de tu navegador (clic en el candado de la barra de direcciones).'
-      : 'Could not access the microphone. Check that the permission is enabled in your browser settings (click the lock icon in the address bar).');
     return;
   }
 
@@ -840,7 +826,7 @@ async function startVoiceMode() {
   document.getElementById('voice-transcript').textContent = currentLang === 'es'
     ? 'Escuchando tu consulta...' : 'Listening for your query...';
 
-  setTimeout(_startListening, 200);
+  setTimeout(_startListening, 150);
 }
 
 function stopVoiceMode() {
