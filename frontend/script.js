@@ -700,172 +700,233 @@ function nextTourStep() {
 }
 
 // =============================================
-//  MODO VOZ EN VIVO (Web Speech API)
+//  MODO VOZ — MediaRecorder + Backend (Gemini)
+//  No usa webkitSpeechRecognition para evitar
+//  bloqueos de red con Google Speech API.
 // =============================================
-let recognition = null;
 let isVoiceModeActive = false;
 let isBotSpeaking = false;
-let isProcessingVoice = false; // Lock anti-duplicados
-let silenceTimer = null; // Temporizador de silencio
+let isProcessingVoice = false;
 let synthesis = window.speechSynthesis || null;
+let mediaRecorder = null;
+let audioStream = null;
+let audioChunks = [];
+let silenceTimer = null;
+let audioContext = null;
+let analyserNode = null;
+let silenceDetectorInterval = null;
+let voiceDetected = false;
 
-function _crearRecognition() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) return null;
-
-  const rec = new SpeechRecognition();
-  rec.lang = currentLang === 'es' ? 'es-ES' : 'en-US';
-  rec.continuous = false;     // Usar detección de silencio nativa del navegador para mayor robustez
-  rec.interimResults = true;  // Mostrar resultados preliminares en tiempo real
-
-  rec.onresult = (event) => {
-    if (isBotSpeaking || isProcessingVoice) return;
-
-    let interimTranscript = '';
-    let finalTranscript = '';
-
-    for (let i = event.resultIndex; i < event.results.length; ++i) {
-      if (event.results[i].isFinal) {
-        finalTranscript += event.results[i][0].transcript;
-      } else {
-        interimTranscript += event.results[i][0].transcript;
-      }
-    }
-
-    const displayEl = document.getElementById('voice-transcript');
-    const textToShow = finalTranscript || interimTranscript;
-
-    if (displayEl && textToShow.trim()) {
-      displayEl.textContent = textToShow.trim();
-    }
-
-    // Cuando el navegador detecte que el usuario ha terminado la frase de forma nativa
-    if (finalTranscript.trim()) {
-      isProcessingVoice = true;  // LOCK
-      document.getElementById('chat-input').value = finalTranscript.trim();
-      
-      // Esperar un instante para que el usuario vea su texto final en pantalla y luego enviar
-      setTimeout(() => {
-        sendMessageFromVoice();
-      }, 500);
-    }
-  };
-
-  rec.onerror = (event) => {
-    console.error('Speech recognition error:', event.error);
-    const transcriptEl = document.getElementById('voice-transcript');
-
-    if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-      alert(currentLang === 'es'
-        ? 'Permiso de micrófono denegado o no disponible. Actívalo en la configuración del navegador (clic en el candado de la barra de direcciones).'
-        : 'Microphone permission denied or not available. Enable it in your browser settings (click the lock icon in the address bar).');
-      stopVoiceMode();
-    } else if (event.error === 'network') {
-      if (transcriptEl) transcriptEl.textContent = currentLang === 'es'
-        ? 'Error de red. Reintentando...' : 'Network error. Retrying...';
-    } else if (event.error === 'no-speech') {
-      if (transcriptEl) {
-        transcriptEl.textContent = currentLang === 'es'
-          ? 'No se detecta sonido. Asegúrate de que tu micrófono no esté silenciado y habla más cerca, o haz clic en el icono de grabación de la barra de direcciones para elegir el dispositivo correcto.'
-          : 'No sound detected. Make sure your microphone is not muted, speak closer, or click the recording icon in the address bar to select the correct device.';
-      }
-    }
-  };
-
-  rec.onend = () => {
-    // Si no se capturó nada final y el modo voz sigue activo, volver a iniciar la escucha automáticamente
-    if (isVoiceModeActive && !isBotSpeaking && !isProcessingVoice) {
-      const elapsed = Date.now() - lastStartTime;
-      if (elapsed < 1500) {
-        rapidFailureCount++;
-      } else {
-        rapidFailureCount = 0; // Reset si duró bastante
-      }
-
-      if (rapidFailureCount >= 3) {
-        console.error("SpeechRecognition is failing too rapidly. Stopping loop.");
-        alert(currentLang === 'es'
-          ? 'El motor de reconocimiento de voz de tu navegador está fallando de manera continua. Si estás usando Brave, asegúrate de activar "Usar servicios web de Google para el reconocimiento de voz" en brave://settings/privacy, o prueba con Google Chrome / Edge original.'
-          : 'The browser\'s speech recognition engine is failing consistently. If you are using Brave, make sure Google speech services are enabled in brave://settings/privacy, or try with Chrome / Edge.');
-        stopVoiceMode();
-        return;
-      }
-
-      setTimeout(_startListening, 400);
-    }
-  };
-
-  return rec;
+// -------- Utilidad: blob → base64 --------
+function _blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result;
+      const base64 = dataUrl.split(',')[1];
+      resolve(base64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
 }
 
-let _voiceRetryCount = 0;
-const MAX_VOICE_RETRIES = 3;
-let lastStartTime = 0;
-let rapidFailureCount = 0;
+// -------- Detección de silencio con AnalyserNode --------
+function _startSilenceDetection(stream) {
+  if (!window.AudioContext && !window.webkitAudioContext) return;
+  audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  analyserNode = audioContext.createAnalyser();
+  analyserNode.fftSize = 512;
+  const source = audioContext.createMediaStreamSource(stream);
+  source.connect(analyserNode);
 
-function _startListening() {
-  if (!isVoiceModeActive || isBotSpeaking || isProcessingVoice) return;
-  if (!recognition) return;
-  try {
-    recognition.start();
-    lastStartTime = Date.now();
-    _voiceRetryCount = 0; // Reset en inicio exitoso
-  } catch (e) {
-    console.warn('SpeechRecognition.start() error:', e.message);
-    // Si ya estaba corriendo, reintentar con delay
-    if (_voiceRetryCount < MAX_VOICE_RETRIES) {
-      _voiceRetryCount++;
-      setTimeout(_startListening, 300);
+  const dataArray = new Uint8Array(analyserNode.frequencyBinCount);
+  let silentMs = 0;
+  const SILENCE_THRESHOLD = 8;   // Nivel mínimo para considerar silencio
+  const SILENCE_DURATION = 1800; // ms de silencio antes de enviar
+
+  silenceDetectorInterval = setInterval(() => {
+    if (!isVoiceModeActive || isProcessingVoice) return;
+    analyserNode.getByteFrequencyData(dataArray);
+    const avg = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
+
+    if (avg > SILENCE_THRESHOLD) {
+      voiceDetected = true;
+      silentMs = 0;
+      document.getElementById('voice-transcript').textContent =
+        currentLang === 'es' ? 'Escuchando...' : 'Listening...';
+    } else if (voiceDetected) {
+      silentMs += 100;
+      if (silentMs >= SILENCE_DURATION) {
+        // El usuario terminó de hablar → enviar el audio
+        _stopAndTranscribe();
+      }
     }
+  }, 100);
+}
+
+function _stopSilenceDetection() {
+  clearInterval(silenceDetectorInterval);
+  silenceDetectorInterval = null;
+  if (audioContext) {
+    try { audioContext.close(); } catch (e) { }
+    audioContext = null;
+    analyserNode = null;
+  }
+}
+
+// -------- Iniciar grabación --------
+async function _startRecording() {
+  if (!isVoiceModeActive) return;
+
+  audioChunks = [];
+  voiceDetected = false;
+
+  try {
+    audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  } catch (err) {
+    console.error('Microphone access denied:', err);
+    document.getElementById('voice-transcript').textContent = currentLang === 'es'
+      ? 'Permiso de micrófono denegado. Habilítalo en la configuración del navegador.'
+      : 'Microphone permission denied. Enable it in browser settings.';
+    stopVoiceMode();
+    return;
+  }
+
+  // Elegir formato soportado
+  const mimeType = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4']
+    .find(t => MediaRecorder.isTypeSupported(t)) || '';
+
+  mediaRecorder = new MediaRecorder(audioStream, mimeType ? { mimeType } : {});
+  mediaRecorder.ondataavailable = (e) => {
+    if (e.data.size > 0) audioChunks.push(e.data);
+  };
+  mediaRecorder.start(100); // Recoger datos cada 100ms
+
+  _startSilenceDetection(audioStream);
+
+  setVoiceUIState('listening');
+  document.getElementById('voice-transcript').textContent = currentLang === 'es'
+    ? 'Di tu consulta...' : 'Say your query...';
+}
+
+// -------- Detener y transcribir --------
+async function _stopAndTranscribe() {
+  if (isProcessingVoice || !mediaRecorder || mediaRecorder.state === 'inactive') return;
+  isProcessingVoice = true;
+
+  _stopSilenceDetection();
+
+  const transcriptEl = document.getElementById('voice-transcript');
+  if (transcriptEl) transcriptEl.textContent = currentLang === 'es' ? 'Procesando audio...' : 'Processing audio...';
+  setVoiceUIState('processing');
+
+  // Detener grabación y esperar el blob final
+  await new Promise((resolve) => {
+    mediaRecorder.onstop = resolve;
+    mediaRecorder.stop();
+  });
+
+  // Detener el stream de audio
+  if (audioStream) {
+    audioStream.getTracks().forEach(t => t.stop());
+    audioStream = null;
+  }
+
+  if (audioChunks.length === 0 || !voiceDetected) {
+    isProcessingVoice = false;
+    if (isVoiceModeActive) _startRecording();
+    return;
+  }
+
+  try {
+    const mimeType = audioChunks[0]?.type || 'audio/webm';
+    const blob = new Blob(audioChunks, { type: mimeType });
+
+    if (blob.size < 1500) {
+      isProcessingVoice = false;
+      if (isVoiceModeActive) _startRecording();
+      return;
+    }
+
+    // Convertir a base64 y enviar al backend
+    const base64Audio = await _blobToBase64(blob);
+
+    const resp = await fetch(`${API_URL}/transcribe`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.token}`
+      },
+      body: JSON.stringify({
+        audio_base64: base64Audio,
+        mime_type: mimeType
+      })
+    });
+
+    if (!resp.ok) throw new Error(`Transcripción falló: ${resp.status}`);
+
+    const data = await resp.json();
+    const texto = (data.texto || '').trim();
+
+    if (!texto) {
+      isProcessingVoice = false;
+      if (isVoiceModeActive) _startRecording();
+      return;
+    }
+
+    if (transcriptEl) transcriptEl.textContent = texto;
+    document.getElementById('chat-input').value = texto;
+
+    // Enviar el mensaje transcrito al chat
+    setTimeout(() => sendMessageFromVoice(), 400);
+
+  } catch (err) {
+    console.error('Transcripción error:', err);
+    isProcessingVoice = false;
+    if (isVoiceModeActive) _startRecording();
   }
 }
 
 function startVoiceMode() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) {
-    alert('Tu navegador no soporta el reconocimiento de voz. Usa Google Chrome o Microsoft Edge.');
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    alert(currentLang === 'es'
+      ? 'Tu navegador no soporta grabación de audio. Usa Chrome, Edge o Firefox actualizado.'
+      : 'Your browser does not support audio recording. Use updated Chrome, Edge or Firefox.');
     return;
   }
 
-  // Asegurarse de cerrar cualquier sesión previa
-  if (recognition) {
-    try { recognition.abort(); } catch (e) { }
-    recognition = null;
-  }
-  if (synthesis) {
-    try { synthesis.cancel(); } catch (e) { }
-  }
-
-  recognition = _crearRecognition();
   isVoiceModeActive = true;
   isBotSpeaking = false;
   isProcessingVoice = false;
-  _voiceRetryCount = 0;
-  rapidFailureCount = 0;
+  voiceDetected = false;
 
-  // UI
   document.getElementById('voice-modal').classList.add('show');
   document.getElementById('btn-voice-toggle').classList.add('active');
-  setVoiceUIState('listening');
-  document.getElementById('voice-transcript').textContent = currentLang === 'es'
-    ? 'Escuchando tu consulta...' : 'Listening for your query...';
 
-  setTimeout(_startListening, 150);
+  _startRecording();
 }
 
 function stopVoiceMode() {
   isVoiceModeActive = false;
   isBotSpeaking = false;
   isProcessingVoice = false;
-  clearTimeout(silenceTimer);
+
+  _stopSilenceDetection();
+
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    try { mediaRecorder.stop(); } catch (e) { }
+  }
+  mediaRecorder = null;
+  audioChunks = [];
+
+  if (audioStream) {
+    audioStream.getTracks().forEach(t => t.stop());
+    audioStream = null;
+  }
 
   if (synthesis) {
     try { synthesis.cancel(); } catch (e) { }
-  }
-
-  if (recognition) {
-    try { recognition.abort(); } catch (e) { }
-    recognition = null;
   }
 
   document.getElementById('voice-modal').classList.remove('show');

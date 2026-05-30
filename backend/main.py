@@ -34,6 +34,7 @@ from routes.chat import router as chat_router
 from routes.admin import router as admin_router
 from routes.docente import router as docente_router
 from routes.telegram import router as telegram_router
+from routes.transcribe import router as transcribe_router
 
 # ===================== RATE LIMITER =====================
 
@@ -137,6 +138,7 @@ app.include_router(chat_router)
 app.include_router(admin_router)
 app.include_router(docente_router)
 app.include_router(telegram_router)
+app.include_router(transcribe_router)
 
 
 # ===================== RUTA RAÍZ =====================
