@@ -165,7 +165,10 @@ class GeminiService:
                         system_instruction=system_prompt,
                         temperature=0.7,
                         max_output_tokens=8192,
-                        tools=[agendar_tiempo_estudio]
+                        tools=[agendar_tiempo_estudio],
+                        automatic_function_calling=types.AutomaticFunctionCallingConfig(
+                            disable=True
+                        )
                     )
                 )
 
