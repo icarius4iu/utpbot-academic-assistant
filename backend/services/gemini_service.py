@@ -170,69 +170,93 @@ class GeminiService:
                 )
 
                 # Interceptar invocación de herramienta/función (Function Calling)
-                if response.function_calls:
-                    call = response.function_calls[0]
-                    if call.name == "agendar_tiempo_estudio":
-                        args = call.args
-                        t_titulo = args.get("titulo")
-                        t_inicio = args.get("fecha_inicio")
-                        t_fin = args.get("fecha_fin")
-                        t_desc = args.get("descripcion", "")
+                # El SDK google-genai puede exponer las llamadas como response.function_calls
+                # o dentro de response.candidates[0].content.parts
+                function_call = None
 
-                        print(f"📅 [TOOL] Ejecutando agendar_tiempo_estudio para: {t_titulo} ({t_inicio} - {t_fin})")
+                # Método 1: propiedad directa del SDK
+                try:
+                    fc_list = response.function_calls
+                    if fc_list:
+                        function_call = fc_list[0]
+                except Exception:
+                    pass
 
-                        # Importación perezosa para evitar dependencias circulares
-                        from services.calendar_service import calendar_service
-                        from services.telegram_service import telegram_service
+                # Método 2: inspeccionar parts de los candidates
+                if function_call is None:
+                    try:
+                        for cand in response.candidates or []:
+                            for part in cand.content.parts or []:
+                                if hasattr(part, "function_call") and part.function_call:
+                                    function_call = part.function_call
+                                    break
+                            if function_call:
+                                break
+                    except Exception:
+                        pass
 
+                if function_call and function_call.name == "agendar_tiempo_estudio":
+                    args = dict(function_call.args)
+                    t_titulo = args.get("titulo")
+                    t_inicio = args.get("fecha_inicio")
+                    t_fin = args.get("fecha_fin")
+                    t_desc = args.get("descripcion", "")
+
+                    print(f"📅 [TOOL] Ejecutando agendar_tiempo_estudio para: {t_titulo} ({t_inicio} - {t_fin})")
+
+                    # Importación perezosa para evitar dependencias circulares
+                    from services.calendar_service import calendar_service
+                    from services.telegram_service import telegram_service
+
+                    try:
+                        # 1. Agendar en Google Calendar
+                        await calendar_service.crear_evento_estudio(
+                            titulo=t_titulo,
+                            fecha_inicio=t_inicio,
+                            fecha_fin=t_fin,
+                            descripcion=t_desc
+                        )
+
+                        # 2. Enviar confirmación a Telegram
+                        await telegram_service.enviar_confirmacion_estudio(
+                            titulo=t_titulo,
+                            fecha_inicio=t_inicio,
+                            fecha_fin=t_fin,
+                            descripcion=t_desc
+                        )
+
+                        # Formatear la fecha para que sea legible en la respuesta de chat
                         try:
-                            # 1. Agendar en Google Calendar
-                            await calendar_service.crear_evento_estudio(
-                                titulo=t_titulo,
-                                fecha_inicio=t_inicio,
-                                fecha_fin=t_fin,
-                                descripcion=t_desc
-                            )
+                            fecha_str = t_inicio.split("T")[0]
+                            h_inicio = t_inicio.split("T")[1][:5]
+                            h_fin = t_fin.split("T")[1][:5]
+                            y, m, d = fecha_str.split("-")
+                            fecha_legible = f"{d}/{m}/{y}"
+                        except Exception:
+                            fecha_legible = t_inicio
+                            h_inicio = "Ver"
+                            h_fin = "Ver"
 
-                            # 2. Enviar confirmación a Telegram
-                            await telegram_service.enviar_confirmacion_estudio(
-                                titulo=t_titulo,
-                                fecha_inicio=t_inicio,
-                                fecha_fin=t_fin,
-                                descripcion=t_desc
-                            )
-
-                            # Formatear la fecha para que sea legible en la respuesta de chat
-                            try:
-                                fecha_str = t_inicio.split("T")[0]
-                                h_inicio = t_inicio.split("T")[1][:5]
-                                h_fin = t_fin.split("T")[1][:5]
-                                y, m, d = fecha_str.split("-")
-                                fecha_legible = f"{d}/{m}/{y}"
-                            except Exception:
-                                fecha_legible = t_inicio
-                                h_inicio = "Ver"
-                                h_fin = "Ver"
-
-                            exito_msg = (
-                                f"📅 **¡Sesión de estudio agendada con éxito!**\n\n"
-                                f"He reservado el bloque en tu **Google Calendar** y te he enviado una confirmación instantánea a tu **Telegram**:\n\n"
-                                f"* 📖 **Materia:** `{t_titulo}`\n"
-                                f"* 📅 **Fecha:** {fecha_legible}\n"
-                                f"* ⏰ **Horario:** {h_inicio} - {h_fin}\n\n"
-                                f"📝 **Detalles:** {t_desc or 'Sin descripción adicional.'}\n\n"
-                                f"¡Mucho éxito en tu preparación académica! 🚀"
-                            )
-                            return exito_msg, ["¿Cuál es mi horario?", "¿Cuáles son mis notas?", "¿Cuándo es mi próximo examen?"]
-                        except Exception as tool_err:
-                            print(f"[ERROR TOOL] Falló ejecución de herramienta: {tool_err}")
-                            return (
-                                f"⚠️ **Error al agendar la sesión de estudio:** {tool_err}\n\n"
-                                "Por favor, verifica que tu calendario esté compartido correctamente con la cuenta de servicio o intenta nuevamente.",
-                                ["¿Cuál es mi horario?", "¿Cuáles son mis notas?", "¿Cuándo es mi próximo examen?"]
-                            )
+                        exito_msg = (
+                            f"Sesion de estudio agendada con exito.\n\n"
+                            f"He reservado el bloque en tu Google Calendar y te he enviado una confirmacion instantanea a tu Telegram:\n\n"
+                            f"Materia: {t_titulo}\n"
+                            f"Fecha: {fecha_legible}\n"
+                            f"Horario: {h_inicio} - {h_fin}\n\n"
+                            f"Detalles: {t_desc or 'Sin descripcion adicional.'}\n\n"
+                            f"Mucho exito en tu preparacion academica."
+                        )
+                        return exito_msg, ["Cual es mi horario?", "Cuales son mis notas?", "Cuando es mi proximo examen?"]
+                    except Exception as tool_err:
+                        print(f"[ERROR TOOL] Falló ejecución de herramienta: {tool_err}")
+                        return (
+                            f"Error al agendar la sesion de estudio: {tool_err}\n\n"
+                            "Por favor, verifica que tu calendario este compartido correctamente con la cuenta de servicio o intenta nuevamente.",
+                            ["Cual es mi horario?", "Cuales son mis notas?", "Cuando es mi proximo examen?"]
+                        )
 
                 texto = response.text.strip()
+
                 respuesta_limpia = self._limpiar_respuesta(texto)
                 sugerencias = self._extraer_sugerencias(texto)
                 print(f"[OK] Respuesta con: {nombre}")
