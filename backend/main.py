@@ -119,10 +119,12 @@ if os.getenv("DEBUG", "false").lower() == "true":
 
 cors_origins = list(set(cors_origins))
 
+# Permitir todos los orígenes de forma segura ya que la autenticación es por cabecera Bearer Token (JWT) y no usa cookies.
+# Esto previene bloqueos de CORS en cualquier dominio de Vercel (tanto producción como previews temporales).
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=cors_origins,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
