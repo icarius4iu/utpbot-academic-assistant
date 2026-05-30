@@ -764,7 +764,11 @@ function _crearRecognition() {
       if (transcriptEl) transcriptEl.textContent = currentLang === 'es'
         ? 'Error de red. Reintentando...' : 'Network error. Retrying...';
     } else if (event.error === 'no-speech') {
-      // no-speech es normal si el usuario tarda en hablar; el navegador detiene la escucha automáticamente
+      if (transcriptEl) {
+        transcriptEl.textContent = currentLang === 'es'
+          ? 'No se detecta sonido. Asegúrate de que tu micrófono no esté silenciado y habla más cerca, o haz clic en el icono de grabación de la barra de direcciones para elegir el dispositivo correcto.'
+          : 'No sound detected. Make sure your microphone is not muted, speak closer, or click the recording icon in the address bar to select the correct device.';
+      }
     }
   };
 
