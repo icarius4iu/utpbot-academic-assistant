@@ -771,7 +771,23 @@ function _crearRecognition() {
   rec.onend = () => {
     // Si no se capturó nada final y el modo voz sigue activo, volver a iniciar la escucha automáticamente
     if (isVoiceModeActive && !isBotSpeaking && !isProcessingVoice) {
-      setTimeout(_startListening, 300);
+      const elapsed = Date.now() - lastStartTime;
+      if (elapsed < 1500) {
+        rapidFailureCount++;
+      } else {
+        rapidFailureCount = 0; // Reset si duró bastante
+      }
+
+      if (rapidFailureCount >= 3) {
+        console.error("SpeechRecognition is failing too rapidly. Stopping loop.");
+        alert(currentLang === 'es'
+          ? 'El motor de reconocimiento de voz de tu navegador está fallando de manera continua. Si estás usando Brave, asegúrate de activar "Usar servicios web de Google para el reconocimiento de voz" en brave://settings/privacy, o prueba con Google Chrome / Edge original.'
+          : 'The browser\'s speech recognition engine is failing consistently. If you are using Brave, make sure Google speech services are enabled in brave://settings/privacy, or try with Chrome / Edge.');
+        stopVoiceMode();
+        return;
+      }
+
+      setTimeout(_startListening, 400);
     }
   };
 
@@ -780,12 +796,15 @@ function _crearRecognition() {
 
 let _voiceRetryCount = 0;
 const MAX_VOICE_RETRIES = 3;
+let lastStartTime = 0;
+let rapidFailureCount = 0;
 
 function _startListening() {
   if (!isVoiceModeActive || isBotSpeaking || isProcessingVoice) return;
   if (!recognition) return;
   try {
     recognition.start();
+    lastStartTime = Date.now();
     _voiceRetryCount = 0; // Reset en inicio exitoso
   } catch (e) {
     console.warn('SpeechRecognition.start() error:', e.message);
@@ -818,6 +837,7 @@ function startVoiceMode() {
   isBotSpeaking = false;
   isProcessingVoice = false;
   _voiceRetryCount = 0;
+  rapidFailureCount = 0;
 
   // UI
   document.getElementById('voice-modal').classList.add('show');
