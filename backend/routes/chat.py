@@ -55,8 +55,8 @@ async def chat(request: ChatRequest, usuario: dict = Depends(verificar_token)):
         es_primer_mensaje=es_primer_mensaje
     )
 
-    # 4. Generar respuesta con Gemini
-    respuesta, sugerencias = gemini_service.generar_respuesta(
+    # 4. Generar respuesta con Gemini (asíncrono para agendar y notificar)
+    respuesta, sugerencias = await gemini_service.generar_respuesta(
         system_prompt=system_prompt,
         mensaje_usuario=mensaje,
         historial=historial,

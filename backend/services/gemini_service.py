@@ -108,6 +108,23 @@ def _extraer_texto_pdf(file_bytes: bytes) -> str:
         print(f"[WARN] Error extrayendo PDF con PyMuPDF: {e}")
         return ""
 
+def agendar_tiempo_estudio(
+    titulo: str,
+    fecha_inicio: str,
+    fecha_fin: str,
+    descripcion: str = ""
+) -> str:
+    """
+    Agenda una sesión de estudio en el Google Calendar y envía una confirmación por Telegram.
+    
+    Args:
+        titulo: Título descriptivo de la materia o tema a estudiar.
+        fecha_inicio: Fecha y hora de inicio en formato ISO 8601 (ej. "2026-06-03T16:00:00").
+        fecha_fin: Fecha y hora de fin en formato ISO 8601 (ej. "2026-06-03T18:00:00").
+        descripcion: Detalles o temas a estudiar durante la sesión.
+    """
+    return "agendar_tiempo_estudio_call"
+
 
 class GeminiService:
     """
@@ -116,7 +133,7 @@ class GeminiService:
     Soporta análisis de documentos: PDF (nativo Gemini), DOCX, XLSX, TXT, CSV.
     """
 
-    def generar_respuesta(
+    async def generar_respuesta(
         self,
         system_prompt: str,
         mensaje_usuario: str,
@@ -127,7 +144,7 @@ class GeminiService:
         file_data: Optional[str] = None
     ) -> Tuple[str, List[str]]:
         """
-        Genera una respuesta del chatbot con fallback entre modelos.
+        Genera una respuesta del chatbot con fallback entre modelos y soporte de Function Calling.
         Soporta documentos adjuntos: PDF (nativo), DOCX, XLSX, TXT, CSV.
         """
         client = _get_client()
@@ -148,8 +165,72 @@ class GeminiService:
                         system_instruction=system_prompt,
                         temperature=0.7,
                         max_output_tokens=8192,
+                        tools=[agendar_tiempo_estudio]
                     )
                 )
+
+                # Interceptar invocación de herramienta/función (Function Calling)
+                if response.function_calls:
+                    call = response.function_calls[0]
+                    if call.name == "agendar_tiempo_estudio":
+                        args = call.args
+                        t_titulo = args.get("titulo")
+                        t_inicio = args.get("fecha_inicio")
+                        t_fin = args.get("fecha_fin")
+                        t_desc = args.get("descripcion", "")
+
+                        print(f"📅 [TOOL] Ejecutando agendar_tiempo_estudio para: {t_titulo} ({t_inicio} - {t_fin})")
+
+                        # Importación perezosa para evitar dependencias circulares
+                        from services.calendar_service import calendar_service
+                        from services.telegram_service import telegram_service
+
+                        try:
+                            # 1. Agendar en Google Calendar
+                            await calendar_service.crear_evento_estudio(
+                                titulo=t_titulo,
+                                fecha_inicio=t_inicio,
+                                fecha_fin=t_fin,
+                                descripcion=t_desc
+                            )
+
+                            # 2. Enviar confirmación a Telegram
+                            await telegram_service.enviar_confirmacion_estudio(
+                                titulo=t_titulo,
+                                fecha_inicio=t_inicio,
+                                fecha_fin=t_fin,
+                                descripcion=t_desc
+                            )
+
+                            # Formatear la fecha para que sea legible en la respuesta de chat
+                            try:
+                                fecha_str = t_inicio.split("T")[0]
+                                h_inicio = t_inicio.split("T")[1][:5]
+                                h_fin = t_fin.split("T")[1][:5]
+                                y, m, d = fecha_str.split("-")
+                                fecha_legible = f"{d}/{m}/{y}"
+                            except Exception:
+                                fecha_legible = t_inicio
+                                h_inicio = "Ver"
+                                h_fin = "Ver"
+
+                            exito_msg = (
+                                f"📅 **¡Sesión de estudio agendada con éxito!**\n\n"
+                                f"He reservado el bloque en tu **Google Calendar** y te he enviado una confirmación instantánea a tu **Telegram**:\n\n"
+                                f"* 📖 **Materia:** `{t_titulo}`\n"
+                                f"* 📅 **Fecha:** {fecha_legible}\n"
+                                f"* ⏰ **Horario:** {h_inicio} - {h_fin}\n\n"
+                                f"📝 **Detalles:** {t_desc or 'Sin descripción adicional.'}\n\n"
+                                f"¡Mucho éxito en tu preparación académica! 🚀"
+                            )
+                            return exito_msg, ["¿Cuál es mi horario?", "¿Cuáles son mis notas?", "¿Cuándo es mi próximo examen?"]
+                        except Exception as tool_err:
+                            print(f"[ERROR TOOL] Falló ejecución de herramienta: {tool_err}")
+                            return (
+                                f"⚠️ **Error al agendar la sesión de estudio:** {tool_err}\n\n"
+                                "Por favor, verifica que tu calendario esté compartido correctamente con la cuenta de servicio o intenta nuevamente.",
+                                ["¿Cuál es mi horario?", "¿Cuáles son mis notas?", "¿Cuándo es mi próximo examen?"]
+                            )
 
                 texto = response.text.strip()
                 respuesta_limpia = self._limpiar_respuesta(texto)

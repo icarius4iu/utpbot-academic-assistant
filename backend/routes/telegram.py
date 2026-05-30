@@ -90,14 +90,19 @@ async def configurar_webhook():
 @router.get("/status")
 async def estado_telegram():
     """
-    Verifica el estado de la configuración del bot de Telegram.
+    Verifica el estado de la configuración del bot de Telegram en modo notificación.
     """
     token_configurado = bool(TELEGRAM_BOT_TOKEN and TELEGRAM_BOT_TOKEN != "your_telegram_bot_token_here")
     webhook_configurado = bool(TELEGRAM_WEBHOOK_URL and "your-backend" not in TELEGRAM_WEBHOOK_URL)
+    chat_id_notificaciones = os.getenv("TELEGRAM_NOTIFICATIONS_CHAT_ID", "")
+    chat_id_configurado = bool(chat_id_notificaciones and chat_id_notificaciones != "your_telegram_chat_id_here")
 
     return {
         "token_configurado": token_configurado,
         "webhook_configurado": webhook_configurado,
         "webhook_url": TELEGRAM_WEBHOOK_URL if webhook_configurado else "No configurado",
-        "listo": token_configurado and webhook_configurado
+        "chat_id_configurado": chat_id_configurado,
+        "chat_id_notificaciones": chat_id_notificaciones if chat_id_configurado else "No configurado",
+        "listo": token_configurado and webhook_configurado and chat_id_configurado
     }
+

@@ -16,38 +16,29 @@ logger = logging.getLogger(__name__)
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_API = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}"
 
-# Mensajes de bienvenida / ayuda
+# Mensajes de bienvenida / ayuda en modo notificación
 MENSAJE_BIENVENIDA = """
-👋 ¡Hola! Soy el *Asistente Académico Virtual UTP* 🎓
+🤖 *Bot de Mensajería y Notificaciones UTP IA* 🎓
 
-Puedo ayudarte con consultas sobre:
-📚 Horarios de clases
-📝 Notas y evaluaciones  
-📅 Calendario académico
-🏫 Trámites y servicios UTP
-ℹ️ Información general universitaria
+¡Hola! Este canal sirve exclusivamente para enviarte **notificaciones automáticas, alertas y confirmaciones** en tiempo real. 
 
-*¿Cómo usar el bot?*
-1️⃣ Escribe tu código institucional (Ej: `E001`)
-2️⃣ Confirma tu identidad
-3️⃣ ¡Haz tus consultas directamente!
+Por ejemplo, cuando uses el Asistente UTP IA en la Web para organizar tu tiempo de estudio, este bot te enviará un mensaje de confirmación cuando los bloques de estudio sean añadidos a tu **Google Calendar** 📅.
 
-O simplemente escribe tu pregunta y te identifico como visitante 👤
-
-Usa /ayuda para ver este mensaje nuevamente.
+🌐 *¿Quieres chatear con la IA o planificar tus horarios?*
+Accede ahora a la plataforma web oficial de **UTP IA**.
 """
 
 MENSAJE_AYUDA = """
-🤖 *Comandos disponibles:*
+🤖 *Bot de Notificaciones UTP IA*
 
-/start — Iniciar el bot
-/ayuda — Ver esta ayuda
-/identificar — Vincular tu código UTP
-/nueva — Iniciar una nueva conversación
-/salir — Cerrar tu sesión
+Este bot está configurado en modo **Notificación**. No procesa consultas interactivas de forma directa en Telegram para garantizar un canal limpio y libre de spam.
 
-📌 *Tip:* También puedes enviarme documentos PDF y te ayudaré a analizarlos.
+📌 *¿Cómo funciona?*
+1. Entra al sitio web del **Asistente Académico UTP IA**.
+2. Planifica tus sesiones de estudio o revisa tus exámenes.
+3. Al agendar tus sesiones de estudio en **Google Calendar**, recibirás una alerta de confirmación instantánea aquí.
 """
+
 
 
 class TelegramSession:
@@ -127,18 +118,13 @@ class TelegramService:
 
     async def procesar_mensaje(self, chat_id: int, texto: str, nombre_telegram: str = ""):
         """
-        Procesa un mensaje entrante de Telegram:
-        - Maneja comandos especiales
-        - Si el usuario está identificado, genera respuesta con Gemini
-        - Si no, solicita identificación
+        Procesa un mensaje entrante de Telegram en modo notificación:
+        - Responde con instrucciones y enlaces al sitio web.
         """
-        sesion = self._obtener_sesion(chat_id)
-        texto_limpio = texto.strip()
+        texto_limpio = texto.strip().lower()
 
-        # ── Comandos ─────────────────────────────────────────────────
+        # Enviar comandos de bienvenida o ayuda de forma formal
         if texto_limpio in ("/start", "/inicio"):
-            sesion.historial = []
-            sesion.esperando_codigo = False
             await self.enviar_mensaje(chat_id, MENSAJE_BIENVENIDA)
             return
 
@@ -146,131 +132,64 @@ class TelegramService:
             await self.enviar_mensaje(chat_id, MENSAJE_AYUDA)
             return
 
-        if texto_limpio in ("/nueva", "/new"):
-            sesion.historial = []
-            await self.enviar_mensaje(chat_id, "🔄 Conversación reiniciada. ¿En qué puedo ayudarte?")
-            return
+        # Para cualquier otro mensaje, recordar cortésmente que es un bot de notificaciones
+        recordatorio = (
+            "🤖 *Bot de Notificaciones UTP IA* 🎓\n\n"
+            "Hola. Este canal está reservado exclusivamente para el envío de **notificaciones, alertas y confirmaciones** automáticas.\n\n"
+            "Si deseas chatear con la Inteligencia Artificial, organizar tus horarios de estudio en Google Calendar o revisar tu avance, ingresa a la plataforma web oficial 🌐."
+        )
+        await self.enviar_mensaje(chat_id, recordatorio)
 
-        if texto_limpio in ("/salir", "/logout"):
-            sesion.codigo_utp = None
-            sesion.historial = []
-            sesion.rol = "estudiante"
-            sesion.nombre = "Visitante"
-            await self.enviar_mensaje(chat_id, "👋 Sesión cerrada. Usa /start para volver a empezar.")
-            return
-
-        if texto_limpio == "/identificar":
-            sesion.esperando_codigo = True
-            await self.enviar_mensaje(
-                chat_id,
-                "🔑 Por favor, escribe tu *código institucional UTP*:\n"
-                "_(Ejemplo: E001, D002)_"
-            )
-            return
-
-        # ── Flujo de identificación ───────────────────────────────────
-        if sesion.esperando_codigo:
-            codigo = texto_limpio.upper()
-            sesion.esperando_codigo = False
-
-            datos_usuario = None
-            rol_encontrado = None
-            nombre_encontrado = "Visitante"
-
-            try:
-                est = sheets_service.buscar_estudiante(codigo)
-                if est:
-                    datos_usuario = est
-                    rol_encontrado = "estudiante"
-                    nombre_encontrado = est.get("nombre", "Estudiante")
-                else:
-                    doc = sheets_service.buscar_docente(codigo)
-                    if doc:
-                        datos_usuario = doc
-                        rol_encontrado = "docente"
-                        nombre_encontrado = doc.get("nombre", "Docente")
-            except Exception as e:
-                logger.warning(f"Sheets no disponible en Telegram: {e}")
-                # Demo fallback
-                demo_est = {"E001": "Ana García", "E002": "Carlos Mendoza", "E003": "Lucía Torres"}
-                demo_doc = {"D001": "Dr. Roberto Flores", "D002": "Mg. Carmen Salinas"}
-                if codigo in demo_est:
-                    nombre_encontrado = demo_est[codigo]
-                    rol_encontrado = "estudiante"
-                elif codigo in demo_doc:
-                    nombre_encontrado = demo_doc[codigo]
-                    rol_encontrado = "docente"
-
-            if rol_encontrado:
-                sesion.codigo_utp = codigo
-                sesion.rol = rol_encontrado
-                sesion.nombre = nombre_encontrado
-                sesion.historial = []
-                await self.enviar_mensaje(
-                    chat_id,
-                    f"✅ ¡Bienvenido/a, *{nombre_encontrado}*!\n"
-                    f"Rol: *{rol_encontrado.capitalize()}*\n\n"
-                    f"Ahora puedes hacerme tus consultas académicas 📚"
-                )
-            else:
-                await self.enviar_mensaje(
-                    chat_id,
-                    f"❌ No encontré el código *{codigo}*.\n"
-                    "Verifica tu código institucional o usa /ayuda."
-                )
-            return
-
-        # ── Generar respuesta con Gemini ──────────────────────────────
-        await self.enviar_typing(chat_id)
-
-        codigo = sesion.codigo_utp or "TELEGRAM_ANON"
-        rol = sesion.rol
+    async def enviar_confirmacion_estudio(
+        self,
+        titulo: str,
+        fecha_inicio: str,  # Formato ISO 8601, ej: "2026-06-03T16:00:00-05:00"
+        fecha_fin: str,     # Formato ISO 8601, ej: "2026-06-03T18:00:00-05:00"
+        descripcion: str = "",
+        chat_id: Optional[int] = None
+    ) -> bool:
+        """
+        Envía un mensaje enriquecido con Markdown que confirma el éxito del agendamiento en Google Calendar.
+        """
+        target_chat_id = chat_id or os.getenv("TELEGRAM_NOTIFICATIONS_CHAT_ID")
+        if not target_chat_id:
+            logger.warning("TELEGRAM_NOTIFICATIONS_CHAT_ID no configurado y no se pasó un chat_id")
+            return False
 
         try:
-            if sesion.codigo_utp:
-                if rol == "estudiante":
-                    datos_usuario = sheets_service.recopilar_datos_estudiante(codigo)
-                else:
-                    datos_usuario = sheets_service.recopilar_datos_docente(codigo)
-            else:
-                datos_usuario = {}
+            target_chat_id = int(target_chat_id)
+        except ValueError:
+            logger.error(f"TELEGRAM_NOTIFICATIONS_CHAT_ID no es un entero válido: {target_chat_id}")
+            return False
 
-            system_prompt = construir_prompt_sistema(
-                rol=rol,
-                nombre=sesion.nombre,
-                datos_usuario=datos_usuario,
-                idioma="es",
-                es_primer_mensaje=(len(sesion.historial) == 0)
-            )
+        # Formatear fecha y horas legibles
+        # Ejemplo: "2026-06-03T16:00:00-05:00" -> fecha: "2026-06-03", horas: "16:00" y "18:00"
+        try:
+            fecha_str = fecha_inicio.split("T")[0]
+            hora_inicio = fecha_inicio.split("T")[1][:5]
+            hora_fin = fecha_fin.split("T")[1][:5]
+            
+            # Formatear fecha a DD/MM/YYYY
+            año, mes, día = fecha_str.split("-")
+            fecha_legible = f"{día}/{mes}/{año}"
+        except Exception:
+            fecha_legible = fecha_inicio
+            hora_inicio = "Ver evento"
+            hora_fin = "Ver evento"
 
-            respuesta, _ = gemini_service.generar_respuesta(
-                system_prompt=system_prompt,
-                mensaje_usuario=texto_limpio,
-                historial=sesion.historial,
-                datos_usuario=datos_usuario,
-            )
+        mensaje_alert = (
+            f"📅 *¡NUEVO BLOQUE DE ESTUDIO AGENDADO!* 📅\n\n"
+            f"Hola, el *Asistente Académico UTP IA* ha reservado un bloque de tiempo de estudio en tu **Google Calendar**:\n\n"
+            f"📖 *Tema:* `{titulo}`\n"
+            f"📅 *Fecha:* {fecha_legible}\n"
+            f"⏰ *Horario:* {hora_inicio} - {hora_fin}\n\n"
+            f"📝 *Detalles:* {descripcion or 'Sin descripción adicional.'}\n\n"
+            f"🚀 _¡Mucho éxito en tu sesión! Organizar tu tiempo con anticipación te garantizará mejores resultados en tus evaluaciones._"
+        )
 
-            # Actualizar historial (mantener máximo 10 turnos)
-            sesion.historial.append({"rol": "user", "contenido": texto_limpio})
-            sesion.historial.append({"rol": "assistant", "contenido": respuesta})
-            if len(sesion.historial) > 20:
-                sesion.historial = sesion.historial[-20:]
-
-            # Enviar respuesta (Telegram tiene límite de 4096 chars)
-            if len(respuesta) > 4000:
-                partes = [respuesta[i:i+4000] for i in range(0, len(respuesta), 4000)]
-                for parte in partes:
-                    await self.enviar_mensaje(chat_id, parte)
-            else:
-                await self.enviar_mensaje(chat_id, respuesta)
-
-        except Exception as e:
-            logger.error(f"Error procesando mensaje Telegram: {e}")
-            await self.enviar_mensaje(
-                chat_id,
-                "⚠️ Ocurrió un error al procesar tu consulta. Por favor, intenta nuevamente."
-            )
+        return await self.enviar_mensaje(chat_id=target_chat_id, texto=mensaje_alert, parse_mode="Markdown")
 
 
 # Instancia global (singleton)
 telegram_service = TelegramService()
+
