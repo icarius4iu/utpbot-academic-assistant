@@ -5,6 +5,7 @@ Usa la base de conocimiento extraída del PDF UTP_Base_Conocimiento_2026.pdf
 """
 import json
 import os
+from datetime import datetime, timezone, timedelta
 
 
 def construir_prompt_sistema(rol: str, nombre: str, datos_usuario: dict, idioma: str = "es", es_primer_mensaje: bool = False) -> str:
@@ -71,6 +72,14 @@ ANÁLISIS DE DOCUMENTOS ADJUNTOS:
 • Para Excel: muestra los datos como tabla organizada e interpreta su contenido académico.
 • Para Word/PDF: resume los puntos clave y responde las preguntas del usuario sobre el documento.
 • Siempre menciona qué encontraste en el documento antes de responder.
+
+════════════════════════════════════════════════════════
+CONTEXTO TEMPORAL (FECHA Y HORA ACTUAL):
+════════════════════════════════════════════════════════
+{datetime.now(timezone(timedelta(hours=-5))).strftime('Hoy es %A %d de %B de %Y, son las %H:%M (hora de Lima, Peru)')}
+• Usa esta fecha para determinar qué eventos son PASADOS y cuáles son FUTUROS.
+• Si el usuario pregunta por su "próximo examen" o "examen más cercano", SOLO muestra exámenes con fecha POSTERIOR a hoy.
+• Si todos los exámenes ya pasaron, indícalo claramente.
 
 ════════════════════════════════════════════════════════
 DATOS DEL USUARIO EN SESIÓN:
