@@ -751,11 +751,23 @@ function _crearRecognition() {
 
   rec.onerror = (event) => {
     console.error('Speech recognition error:', event.error);
-    if (event.error === 'not-allowed') {
-      alert('Permiso de micrófono denegado. Actívalo en la configuración del navegador.');
+    const transcriptEl = document.getElementById('voice-transcript');
+
+    if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+      alert(currentLang === 'es'
+        ? 'Permiso de micrófono denegado. Actívalo en la configuración del navegador (clic en el candado de la barra de direcciones).'
+        : 'Microphone permission denied. Enable it in your browser settings (click the lock icon in the address bar).');
       stopVoiceMode();
+    } else if (event.error === 'network') {
+      if (transcriptEl) transcriptEl.textContent = currentLang === 'es'
+        ? 'Error de red. Reintentando...' : 'Network error. Retrying...';
+      // Chrome usa servidores de Google para procesar voz, necesita conexión
+    } else if (event.error === 'no-speech') {
+      if (transcriptEl) transcriptEl.textContent = currentLang === 'es'
+        ? 'No se detectó voz. Habla cerca del micrófono...' : 'No speech detected. Speak closer to the mic...';
+    } else if (event.error === 'aborted') {
+      // Aborted es normal cuando nosotros detenemos manualmente, ignorar
     }
-    // En caso de error de red u otros, simplemente reiniciar si el modo está activo
   };
 
   rec.onend = () => {
@@ -768,20 +780,43 @@ function _crearRecognition() {
   return rec;
 }
 
+let _voiceRetryCount = 0;
+const MAX_VOICE_RETRIES = 3;
+
 function _startListening() {
   if (!isVoiceModeActive || isBotSpeaking || isProcessingVoice) return;
   if (!recognition) return;
   try {
     recognition.start();
+    _voiceRetryCount = 0; // Reset en inicio exitoso
   } catch (e) {
-    // Si ya estaba corriendo, ignorar el error
+    console.warn('SpeechRecognition.start() error:', e.message);
+    // Si ya estaba corriendo, reintentar con delay
+    if (_voiceRetryCount < MAX_VOICE_RETRIES) {
+      _voiceRetryCount++;
+      setTimeout(_startListening, 300);
+    }
   }
 }
 
-function startVoiceMode() {
+async function startVoiceMode() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
     alert('Tu navegador no soporta el reconocimiento de voz. Usa Google Chrome o Microsoft Edge.');
+    return;
+  }
+
+  // Chrome requiere solicitar permisos de micrófono EXPLÍCITAMENTE
+  // antes de poder usar SpeechRecognition. Edge lo maneja internamente.
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    // Liberar el stream inmediatamente, solo necesitábamos el permiso
+    stream.getTracks().forEach(track => track.stop());
+  } catch (micError) {
+    console.error('Microphone permission error:', micError);
+    alert(currentLang === 'es'
+      ? 'No se pudo acceder al micrófono. Verifica que el permiso esté habilitado en la configuración de tu navegador (clic en el candado de la barra de direcciones).'
+      : 'Could not access the microphone. Check that the permission is enabled in your browser settings (click the lock icon in the address bar).');
     return;
   }
 
@@ -796,6 +831,7 @@ function startVoiceMode() {
   isVoiceModeActive = true;
   isBotSpeaking = false;
   isProcessingVoice = false;
+  _voiceRetryCount = 0;
 
   // UI
   document.getElementById('voice-modal').classList.add('show');
@@ -804,7 +840,7 @@ function startVoiceMode() {
   document.getElementById('voice-transcript').textContent = currentLang === 'es'
     ? 'Escuchando tu consulta...' : 'Listening for your query...';
 
-  setTimeout(_startListening, 150);
+  setTimeout(_startListening, 200);
 }
 
 function stopVoiceMode() {
