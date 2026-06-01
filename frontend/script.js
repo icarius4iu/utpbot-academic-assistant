@@ -362,7 +362,7 @@ function updateHistoryTab() {
     const preview = h.mensajes.filter(m => m.rol === 'user')[0]?.contenido || 'Sesión de consulta';
     const date = new Date(h.fecha).toLocaleDateString('es-PE', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
     return `
-      <div class="history-item" onclick="loadOldSession(${historialGlobal.length - 1 - i})" style="display:flex; align-items:center; justify-content:space-between">
+      <div class="history-item" onclick="loadOldSession('${h.id}')" style="display:flex; align-items:center; justify-content:space-between">
         <div style="overflow:hidden">
           <div class="history-title"><i class="ph ph-chat-teardrop-text"></i> ${escapeHtml(preview)}</div>
           <div class="history-date">${date}</div>
@@ -385,8 +385,10 @@ function deleteHistoryItem(event, id) {
 }
 
 // Cargar una conversación antigua clickeada
-function loadOldSession(index) {
-  const data = historialGlobal[index];
+function loadOldSession(id) {
+  const data = historialGlobal.find(s => s.id === id);
+  if (!data) return;
+  currentSessionId = data.id;
   historialActual = [...data.mensajes];
 
   const area = document.getElementById('messages-area');
@@ -478,14 +480,14 @@ function syncCurrentSession() {
   const code = session.codigo;
   let stored = JSON.parse(localStorage.getItem(`utpbot_hist_v2_${code}`) || '[]');
 
-  if (!window.currentSessionId) window.currentSessionId = new Date().toISOString();
+  if (!currentSessionId) currentSessionId = Date.now().toString();
 
-  const existingIndex = stored.findIndex(s => s.id === window.currentSessionId);
+  const existingIndex = stored.findIndex(s => s.id === currentSessionId);
   if (existingIndex >= 0) {
     stored[existingIndex].mensajes = historialActual;
   } else {
     stored.push({
-      id: window.currentSessionId,
+      id: currentSessionId,
       fecha: new Date().toISOString(),
       mensajes: historialActual
     });
@@ -498,7 +500,7 @@ function syncCurrentSession() {
 
 // Limpia el SessionId para preparar una nueva sesión
 function saveCurrentSessionToHistory() {
-  window.currentSessionId = null;
+  currentSessionId = null;
 }
 
 // =============================================
