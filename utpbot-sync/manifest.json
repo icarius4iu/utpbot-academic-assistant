@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "UTPBot Sync",
+  "version": "0.1.0",
+  "description": "Sincroniza tus cursos y horario del Portal del Estudiante UTP con UTPBot.",
+  "permissions": ["storage", "activeTab", "scripting", "tabs"],
+  "host_permissions": [
+    "https://class.utp.edu.pe/*",
+    "https://api-pao.utpxpedition.com/*",
+    "https://identitytoolkit.googleapis.com/*",
+    "https://securetoken.googleapis.com/*",
+    "http://localhost:8000/*",
+    "http://localhost:8080/*",
+    "https://*.app.github.dev/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "UTPBot Sync"
+  },
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    {
+      "matches": ["https://class.utp.edu.pe/*"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    { "resources": ["inject.js"], "matches": ["https://class.utp.edu.pe/*"] }
+  ]
+}

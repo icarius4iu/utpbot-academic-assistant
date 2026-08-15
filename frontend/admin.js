@@ -5,14 +5,23 @@
  */
 
 // ─── Config ──────────────────────────────────────────────────────────
-const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  ? 'http://localhost:8000'
-  : 'https://web-production-e2e70.up.railway.app';  // ← Actualizar con URL real en producción
+// Ver script.js para la explicación completa del caso GitHub Codespaces.
+function detectarApiBase() {
+  const host = window.location.hostname;
+  if (host === 'localhost' || host === '127.0.0.1') {
+    return 'http://localhost:8000';
+  }
+  const codespace = host.match(/^(.+)-\d+\.app\.github\.dev$/);
+  if (codespace) {
+    return `https://${codespace[1]}-8000.app.github.dev`;
+  }
+  return 'https://web-production-e2e70.up.railway.app'; // ← Actualizar con URL real en producción
+}
+const API_BASE = detectarApiBase();
 
 const REFRESH_INTERVAL_MS = 60_000; // Auto-refresh cada 60 segundos
 
 // ─── Estado global ────────────────────────────────────────────────────
-let _token = null;
 let _chartCategory = null;
 let _chartRole = null;
 let _chartDaily = null;
@@ -28,26 +37,32 @@ const CHART_COLORS = [
 const CHART_COLORS_ALPHA = CHART_COLORS.map(c => c + '33');
 
 // ─── Inicialización ───────────────────────────────────────────────────
+// La sesión ya no vive en localStorage: se pregunta a Firebase (persistida sola
+// en IndexedDB desde el login en index.html) vía onAuthStateChanged. window.UtpFirebase
+// ya existe en este punto — DOMContentLoaded siempre dispara después de que el
+// módulo firebase-config.js termine de ejecutarse. Ver plan, sección "Autenticación".
 document.addEventListener('DOMContentLoaded', () => {
-  const token = localStorage.getItem('utpbot_token');
-  const rol = localStorage.getItem('utpbot_rol');
-  const nombre = localStorage.getItem('utpbot_nombre');
+  window.UtpFirebase.onAuthChange(async (user) => {
+    if (!user) {
+      window.location.href = './index.html';
+      return;
+    }
 
-  if (!token || rol !== 'admin') {
-    // No autorizado — redirigir al login
-    window.location.href = './index.html';
-    return;
-  }
+    const claims = await window.UtpFirebase.getIdTokenClaims();
+    if (!claims || claims.rol !== 'admin') {
+      // Sesión de Firebase válida pero de otro rol (estudiante/docente) — no autorizado aquí.
+      window.location.href = './index.html';
+      return;
+    }
 
-  _token = token;
+    // Actualizar nombre en sidebar
+    const nameEl = document.getElementById('admin-name-sidebar');
+    if (nameEl) nameEl.textContent = claims.nombre || 'Administrador';
 
-  // Actualizar nombre en sidebar
-  const nameEl = document.getElementById('admin-name-sidebar');
-  if (nameEl) nameEl.textContent = nombre || 'Administrador';
-
-  // Cargar datos y mostrar UI
-  cargarDashboard();
-  iniciarAutoRefresh();
+    // Cargar datos y mostrar UI
+    cargarDashboard();
+    iniciarAutoRefresh();
+  });
 });
 
 // ─── Auto-refresh ──────────────────────────────────────────────────────
@@ -59,10 +74,7 @@ function iniciarAutoRefresh() {
 // ─── Logout ───────────────────────────────────────────────────────────
 function doAdminLogout() {
   if (_refreshTimer) clearInterval(_refreshTimer);
-  localStorage.removeItem('utpbot_token');
-  localStorage.removeItem('utpbot_rol');
-  localStorage.removeItem('utpbot_nombre');
-  localStorage.removeItem('utpbot_codigo');
+  window.UtpFirebase.signOut();
   window.location.href = './index.html';
 }
 
@@ -104,9 +116,12 @@ function showSection(sectionId) {
 
 // ─── Fetch con auth ───────────────────────────────────────────────────
 async function apiFetch(endpoint) {
+  // Fresco en cada llamada: el ID token de Firebase expira cada hora y el SDK lo
+  // refresca solo, así que nunca hay que cachearlo en una variable de larga vida.
+  const idToken = await window.UtpFirebase.getIdToken();
   const res = await fetch(`${API_BASE}${endpoint}`, {
     headers: {
-      'Authorization': `Bearer ${_token}`,
+      'Authorization': `Bearer ${idToken}`,
       'Content-Type': 'application/json',
     },
   });

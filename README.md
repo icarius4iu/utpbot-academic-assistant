@@ -6,6 +6,24 @@ Esta versión **v2.0.0** introduce un panel de administración premium, hardenin
 
 ---
 
+## 📚 Documentación Técnica
+
+**Para llevar el proyecto a producción, lee estos documentos en orden:**
+
+1. **[ARQUITECTURA.md](./ARQUITECTURA.md)** 🏗️  
+   Diseño general del sistema, componentes, flujos de datos y diagrama de arquitectura.
+
+2. **[STACK.md](./STACK.md)** 🛠️  
+   Stack tecnológico completo: FastAPI, Python, JavaScript, Railway, Vercel, APIs externas.
+
+3. **[DEPLOYMENT.md](./DEPLOYMENT.md)** 🚀  
+   Guía paso-a-paso para desplegar en Railway (backend), Vercel (frontend) y activar Telegram webhook.
+
+4. **[PRODUCCION.md](./PRODUCCION.md)** ✅  
+   Checklist final de producción, configuración de seguridad, testing, monitoreo y runbooks de incident response.
+
+---
+
 ## 🌟 Nuevas Características (v2.0.0)
 
 ### 📊 1. Panel de Administración (Dashboard Admin)

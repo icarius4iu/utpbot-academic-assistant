@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <style>
+    :root {
+      --utp-rojo: #c8102e;
+      --texto: #1a1a2e;
+      --gris: #666;
+      --borde: #d8d8de;
+      --fondo-suave: #f5f5f7;
+    }
+    body {
+      font: 13px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+      width: 340px; margin: 0; padding: 14px; color: var(--texto);
+    }
+    h1 { font-size: 15px; margin: 0 0 2px; }
+    .sub { color: var(--gris); font-size: 11px; margin: 0 0 12px; }
+    input, button {
+      width: 100%; box-sizing: border-box; padding: 8px;
+      margin: 4px 0; border-radius: 6px; border: 1px solid var(--borde); font: inherit;
+    }
+    button {
+      background: var(--utp-rojo); color: #fff; border: none;
+      cursor: pointer; font-weight: 600;
+    }
+    button.sec { background: #eee; color: #333; }
+    button:disabled { opacity: .5; cursor: default; }
+    .hide { display: none; }
+    .row { display: flex; gap: 6px; }
+    pre {
+      background: var(--fondo-suave); padding: 8px; border-radius: 6px;
+      max-height: 170px; overflow: auto; font-size: 11px; white-space: pre-wrap;
+    }
+    .muted { color: var(--gris); font-size: 11px; }
+    .ok { color: #0a7f3f; }
+    .err { color: var(--utp-rojo); }
+    .aviso { color: #a05a00; font-size: 11px; }
+    details summary { cursor: pointer; color: var(--gris); font-size: 11px; margin-top: 10px; }
+    a { color: var(--utp-rojo); }
+  </style>
+</head>
+<body>
+  <h1>UTPBot Sync</h1>
+  <p class="sub">Lleva tus cursos y horario del Portal del Estudiante a UTPBot.</p>
+
+  <!-- Estado 1: sin sesión -->
+  <div id="login">
+    <p class="muted">Iniciá sesión con tus credenciales de <b>UTPBot</b> (las mismas de la web).</p>
+    <input id="codigo" type="text" placeholder="Código institucional (ej. E001)" autocomplete="username" />
+    <input id="password" type="password" placeholder="Contraseña" autocomplete="current-password" />
+    <button id="btnLogin">Iniciar sesión</button>
+    <p id="loginMsg" class="err"></p>
+  </div>
+
+  <!-- Estado 2: con sesión -->
+  <div id="sesion" class="hide">
+    <p class="muted">Sesión: <b id="quien"></b> · <a href="#" id="logout">salir</a></p>
+    <button id="btnLeer">Leer datos del portal</button>
+
+    <div id="preview" class="hide">
+      <p id="resumen"></p>
+      <pre id="json"></pre>
+      <div class="row">
+        <button id="btnEnviar">Confirmar y enviar</button>
+        <button id="btnCancelar" class="sec">Cancelar</button>
+      </div>
+    </div>
+
+    <p id="msg"></p>
+  </div>
+
+  <details>
+    <summary>Configuración</summary>
+    <input id="backendUrl" placeholder="URL del backend" />
+    <input id="firebaseApiKey" placeholder="Firebase Web API Key" />
+    <button id="btnGuardarCfg" class="sec">Guardar configuración</button>
+  </details>
+
+  <script src="popup.js"></script>
+</body>
+</html>

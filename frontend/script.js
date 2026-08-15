@@ -1,10 +1,23 @@
 // =============================================
 //  CONFIGURACIÓN GLOBAL Y ESTADOS
 // =============================================
-// API URL — local en desarrollo, producción en deploy
-const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-  ? 'http://127.0.0.1:8000'
-  : 'https://web-production-e2e70.up.railway.app'; // ← Actualizar con URL real del backend
+// API URL — local en desarrollo, producción en deploy.
+// En GitHub Codespaces, el navegador corre en OTRA máquina que el backend: 127.0.0.1
+// no sirve ahí. Los puertos reenviados de Codespaces siguen el patrón
+// "<nombre>-<puerto>.app.github.dev" — si el frontend se sirve así, se arma la URL
+// del backend reemplazando el puerto en ese mismo host, en vez de asumir localhost.
+function detectarApiUrl() {
+  const host = window.location.hostname;
+  if (host === 'localhost' || host === '127.0.0.1') {
+    return 'http://127.0.0.1:8000';
+  }
+  const codespace = host.match(/^(.+)-\d+\.app\.github\.dev$/);
+  if (codespace) {
+    return `https://${codespace[1]}-8000.app.github.dev`;
+  }
+  return 'https://web-production-e2e70.up.railway.app'; // ← Actualizar con URL real del backend
+}
+const API_URL = detectarApiUrl();
 let session = null;
 let historialActual = []; // Mensajes de la sesión activa
 let historialGlobal = []; // Todas las conversaciones anteriores guardadas
@@ -253,15 +266,19 @@ async function doLogin() {
       return;
     }
 
-    session = { token: data.token, nombre: data.nombre, rol: data.rol, codigo: data.codigo, idioma: data.idioma };
+    // data.token es un CUSTOM TOKEN de Firebase (no un JWT usable directamente) —
+    // hay que canjearlo por una sesión real antes de poder llamar al backend.
+    // Ver plan de migración, sección "Autenticación: Firebase Auth con custom tokens".
+    await window.UtpFirebase.signInWithCustomToken(data.token);
+    const idToken = await window.UtpFirebase.getIdToken();
+
+    session = { token: idToken, nombre: data.nombre, rol: data.rol, codigo: data.codigo, idioma: data.idioma };
     currentLang = data.idioma || 'es';
 
-    // ── Si es admin, guardar token y redirigir al panel de administración ──
+    // ── Si es admin, redirigir al panel de administración ──
+    // Ya no hace falta guardar el token a mano en localStorage: la sesión de Firebase
+    // queda persistida sola (IndexedDB) y admin.js la rehidrata vía onAuthStateChanged.
     if (data.rol === 'admin') {
-      localStorage.setItem('utpbot_token', data.token);
-      localStorage.setItem('utpbot_rol', 'admin');
-      localStorage.setItem('utpbot_nombre', data.nombre);
-      localStorage.setItem('utpbot_codigo', data.codigo);
       window.location.href = './admin.html';
       return;
     }
@@ -295,11 +312,43 @@ function doLogout() {
   saveCurrentSessionToHistory();
   session = null;
   historialActual = [];
+  window.UtpFirebase.signOut(); // cierra también la sesión persistida de Firebase
   document.getElementById('screen-login').classList.add('active');
   document.getElementById('screen-chat').classList.remove('active');
   document.getElementById('input-codigo').value = '';
   document.getElementById('input-password').value = '';
 }
+
+// ─────────────────────────────────────────────────────────────────────
+// Rehidratación automática de sesión (estudiante/docente) al recargar la
+// página — efecto colateral de adoptar Firebase Auth: antes, solo el admin
+// persistía sesión (localStorage); ahora los 3 roles la recuperan solos vía
+// onAuthStateChanged, sin volver a pedir código+contraseña. El admin no se
+// rehidrata aquí (lo maneja admin.html/admin.js).
+// Se registra en DOMContentLoaded, que siempre dispara DESPUÉS de que el
+// módulo firebase-config.js termine de ejecutarse, así que window.UtpFirebase
+// ya existe en ese punto.
+// ─────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  window.UtpFirebase.onAuthChange(async (user) => {
+    if (!user || session) return; // sin sesión de Firebase, o ya hay una sesión activa en memoria
+
+    const claims = await window.UtpFirebase.getIdTokenClaims();
+    if (!claims || !claims.rol || !claims.codigo || claims.rol === 'admin') return;
+
+    const idToken = await window.UtpFirebase.getIdToken();
+    session = { token: idToken, nombre: claims.nombre, rol: claims.rol, codigo: claims.codigo, idioma: claims.idioma };
+    currentLang = claims.idioma || 'es';
+
+    historialGlobal = JSON.parse(localStorage.getItem(`utpbot_hist_v2_${claims.codigo}`) || '[]');
+    historialActual = [];
+    document.getElementById('messages-area').innerHTML = '';
+
+    initChatScreen();
+    document.getElementById('screen-login').classList.remove('active');
+    document.getElementById('screen-chat').classList.add('active');
+  });
+});
 
 // =============================================
 //  INICIALIZAR CHAT Y SIDEBAR
@@ -529,11 +578,14 @@ async function sendMessage() {
   document.getElementById('btn-send').disabled = true;
 
   try {
+    // El ID token de Firebase se refresca solo cada hora — siempre pedirlo justo
+    // antes de la request, nunca reusar session.token guardado en login.
+    const idToken = await window.UtpFirebase.getIdToken();
     const resp = await fetch(`${API_URL}/chat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.token}`,
+        'Authorization': `Bearer ${idToken}`,
         'Bypass-Tunnel-Reminder': 'true'
       },
       body: JSON.stringify({
@@ -853,12 +905,13 @@ async function _stopAndTranscribe() {
 
     // Convertir a base64 y enviar al backend
     const base64Audio = await _blobToBase64(blob);
+    const idToken = await window.UtpFirebase.getIdToken();
 
     const resp = await fetch(`${API_URL}/transcribe`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.token}`
+        'Authorization': `Bearer ${idToken}`
       },
       body: JSON.stringify({
         audio_base64: base64Audio,
@@ -979,11 +1032,12 @@ async function sendMessageFromVoice() {
   setVoiceUIState('processing');
 
   try {
+    const idToken = await window.UtpFirebase.getIdToken();
     const resp = await fetch(`${API_URL}/chat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.token}`,
+        'Authorization': `Bearer ${idToken}`,
         'Bypass-Tunnel-Reminder': 'true'
       },
       body: JSON.stringify({

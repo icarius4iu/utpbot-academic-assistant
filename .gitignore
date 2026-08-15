@@ -34,3 +34,6 @@ db.sqlite3
 *.njsproj
 *.sln
 *.swp
+
+# Temporales del CLI de Supabase
+supabase/.temp/
