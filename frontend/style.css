@@ -1259,3 +1259,133 @@ select {
   font-style: italic;
   width: 100%;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   MÓDULO DE ESTUDIO PERSONALIZADO
+   Usa las variables del tema existente (--rojo, --surface, --text…)
+   para que respete el modo claro/oscuro sin código extra.
+   ═══════════════════════════════════════════════════════════ */
+
+.est-muted { font-size: 12px; color: var(--text-2); margin: 6px 0; line-height: 1.5; }
+.est-ok  { color: #0a7f3f; }
+.est-err { color: var(--rojo); }
+
+/* — Racha — */
+.est-racha {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--gris-claro); border-radius: var(--radio);
+  padding: 12px; margin-bottom: 10px;
+}
+.est-racha-num {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-width: 58px; height: 58px; border-radius: 50%;
+  background: var(--rojo); color: #fff;
+}
+.est-racha-num span { font-size: 22px; font-weight: 700; line-height: 1; }
+.est-racha-num small { font-size: 10px; opacity: .9; }
+.est-racha-hoy { flex: 1; }
+
+.est-barra {
+  height: 6px; background: var(--gris-medio);
+  border-radius: 99px; overflow: hidden; margin-top: 6px;
+}
+.est-barra-fill {
+  height: 100%; background: var(--rojo);
+  border-radius: 99px; width: 0; transition: width var(--transicion);
+}
+
+.est-semana { display: flex; gap: 5px; margin-bottom: 10px; }
+.est-dia {
+  flex: 1; aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radio-sm); background: var(--gris-medio);
+  font-size: 10px; font-weight: 600; color: var(--text-2);
+}
+.est-dia.ok { background: var(--rojo); color: #fff; }
+
+/* — Formularios — */
+.est-fila { display: flex; gap: 6px; margin-bottom: 8px; }
+.est-fila input, .est-fila select {
+  flex: 1; min-width: 0; padding: 8px; font: inherit; font-size: 13px;
+  border: 1px solid var(--border); border-radius: var(--radio-sm);
+  background: var(--surface); color: var(--text);
+}
+#input-archivo-estudio {
+  width: 100%; font-size: 12px; margin-bottom: 8px; color: var(--text-2);
+}
+
+.est-btn {
+  padding: 8px 12px; border: none; border-radius: var(--radio-sm);
+  background: var(--rojo); color: #fff; font: inherit; font-size: 13px;
+  font-weight: 600; cursor: pointer; transition: background var(--transicion);
+  white-space: nowrap;
+}
+.est-btn:hover { background: var(--rojo-dark); }
+.est-btn:disabled { opacity: .5; cursor: default; }
+.est-btn-sec { background: var(--gris-medio); color: var(--text); }
+.est-btn-sec:hover { background: var(--border); }
+.est-btn-mini { padding: 5px 9px; font-size: 11px; }
+
+/* — Ítems (materiales y rutas) — */
+.est-item {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radio-sm); padding: 10px; margin-bottom: 8px;
+}
+.est-clickable { cursor: pointer; transition: border-color var(--transicion); }
+.est-clickable:hover { border-color: var(--rojo); }
+.est-item-top { display: flex; align-items: center; gap: 6px; justify-content: space-between; }
+.est-item-top strong { font-size: 13px; word-break: break-word; }
+.est-chip {
+  font-size: 10px; padding: 2px 7px; border-radius: 99px;
+  background: var(--rojo-light); color: var(--rojo); font-weight: 600; white-space: nowrap;
+}
+.est-acciones { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+
+/* — Modal — */
+.est-modal {
+  display: none; position: fixed; inset: 0; z-index: 200;
+  background: rgba(0, 0, 0, .5); padding: 20px;
+  align-items: center; justify-content: center;
+}
+.est-modal.show { display: flex; }
+.est-modal-card {
+  background: var(--surface); border-radius: var(--radio);
+  max-width: 620px; width: 100%; max-height: 85vh;
+  display: flex; flex-direction: column; box-shadow: var(--sombra-lg);
+}
+.est-modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+}
+.est-modal-head h3 { margin: 0; font-size: 16px; }
+.est-modal-body { padding: 20px; overflow-y: auto; }
+
+/* — Temas de la ruta — */
+.est-temas { display: flex; flex-direction: column; gap: 10px; }
+.est-tema {
+  display: flex; gap: 10px; align-items: flex-start; cursor: pointer;
+  padding: 10px; border: 1px solid var(--border); border-radius: var(--radio-sm);
+}
+.est-tema input { margin-top: 3px; flex-shrink: 0; }
+.est-tema.hecho strong { text-decoration: line-through; opacity: .6; }
+
+/* — Cuestionario — */
+.est-pregunta { margin-bottom: 22px; }
+.est-opciones { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.est-opcion {
+  text-align: left; padding: 9px 12px; font: inherit; font-size: 13px;
+  border: 1px solid var(--border); border-radius: var(--radio-sm);
+  background: var(--surface); color: var(--text); cursor: pointer;
+  transition: border-color var(--transicion);
+}
+.est-opcion:hover:not(:disabled) { border-color: var(--rojo); }
+.est-opcion.correcta   { background: #e6f5ec; border-color: #0a7f3f; color: #0a7f3f; font-weight: 600; }
+.est-opcion.incorrecta { background: var(--rojo-light); border-color: var(--rojo); color: var(--rojo); }
+.est-explicacion {
+  margin-top: 8px; padding: 9px 12px; font-size: 12px;
+  background: var(--gris-claro); border-radius: var(--radio-sm); color: var(--text-2);
+}
+
+.est-resumen {
+  white-space: pre-wrap; font: inherit; font-size: 13px;
+  line-height: 1.6; margin: 0; color: var(--text);
+}

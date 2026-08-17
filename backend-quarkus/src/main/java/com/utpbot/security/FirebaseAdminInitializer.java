@@ -12,6 +12,7 @@ import org.jboss.logging.Logger;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 /**
  * Inicializa Firebase Admin SDK una sola vez al arrancar la aplicación.
@@ -27,29 +28,43 @@ public class FirebaseAdminInitializer {
 
     private static final Logger LOG = Logger.getLogger(FirebaseAdminInitializer.class);
 
+    /**
+     * Optional a propósito: SmallRye Config convierte un valor vacío a null y hace
+     * FALLAR EL ARRANQUE si el campo es un String plano. Sin esto, desplegar sin
+     * GOOGLE_APPLICATION_CREDENTIALS_JSON tira un error críptico de conversión en vez
+     * de degradar a Application Default Credentials como se pretende abajo.
+     */
     @ConfigProperty(name = "firebase.credentials.json")
-    String credentialsJson;
+    Optional<String> credentialsJson;
 
-    void onStart(@Observes StartupEvent ev) throws IOException {
+    void onStart(@Observes StartupEvent ev) {
         if (!FirebaseApp.getApps().isEmpty()) {
             return;
         }
 
-        GoogleCredentials credentials;
-        if (credentialsJson != null && !credentialsJson.isBlank()) {
-            credentials = GoogleCredentials.fromStream(
-                    new ByteArrayInputStream(credentialsJson.getBytes(StandardCharsets.UTF_8)));
-            LOG.info("Firebase Admin SDK: credenciales cargadas desde GOOGLE_APPLICATION_CREDENTIALS_JSON.");
-        } else {
-            credentials = GoogleCredentials.getApplicationDefault();
-            LOG.info("Firebase Admin SDK: credenciales cargadas desde Application Default Credentials.");
+        try {
+            GoogleCredentials credentials;
+            if (credentialsJson.isPresent() && !credentialsJson.get().isBlank()) {
+                credentials = GoogleCredentials.fromStream(
+                        new ByteArrayInputStream(credentialsJson.get().getBytes(StandardCharsets.UTF_8)));
+                LOG.info("Firebase Admin SDK: credenciales cargadas desde GOOGLE_APPLICATION_CREDENTIALS_JSON.");
+            } else {
+                credentials = GoogleCredentials.getApplicationDefault();
+                LOG.info("Firebase Admin SDK: credenciales cargadas desde Application Default Credentials.");
+            }
+
+            FirebaseApp.initializeApp(FirebaseOptions.builder().setCredentials(credentials).build());
+            LOG.info("Firebase Admin SDK inicializado.");
+
+        } catch (IOException | RuntimeException e) {
+            // Se arranca IGUAL, en modo degradado: sin Firebase el login y todo endpoint
+            // autenticado devolverán error, pero /health y el arranque funcionan. Esto
+            // permite levantar la app para tests o diagnóstico, y hace que el problema
+            // se vea como un WARN legible en vez de un crash-loop con stacktrace de
+            // conversión de config.
+            LOG.warnf("Firebase Admin SDK NO inicializado (%s). "
+                    + "El login y los endpoints autenticados no funcionarán hasta configurar "
+                    + "GOOGLE_APPLICATION_CREDENTIALS_JSON.", e.getMessage());
         }
-
-        FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(credentials)
-                .build();
-
-        FirebaseApp.initializeApp(options);
-        LOG.info("Firebase Admin SDK inicializado.");
     }
 }

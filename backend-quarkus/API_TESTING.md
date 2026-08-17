@@ -23,6 +23,7 @@ Plan de migración completo: `/home/codespace/.claude/plans/bright-doodling-twil
 | `GET /docente/seccion/{codigo}`, `/docente/resumen/{codigo}` | ✅ Implementado y probado en vivo (incluye 403 al consultar otro docente) | |
 | `POST /telegram/webhook`, `/telegram/setup-webhook`, `GET /telegram/status` | ✅ Implementado y probado en vivo | |
 | `POST /transcribe` | ✅ Implementado (401 sin token probado en vivo; flujo completo requiere `GEMINI_API_KEY` real) | |
+| `/estudio/*` (16 endpoints) | ✅ Implementado y probado en vivo con IA real | Módulo de estudio: sílabo→ruta, materiales→cuestionarios/resúmenes, metas y racha |
 
 **Todos los endpoints del backend ya están implementados.** Solo falta lo que requiere
 credenciales reales de terceros para probarse de punta a punta: `GEMINI_API_KEY` (para
@@ -41,15 +42,18 @@ que `/telegram/setup-webhook` registre un webhook de verdad).
 > exactamente los shapes documentados abajo, con los números de agregación
 > verificados campo por campo contra los datos sembrados.
 >
-> Esas pruebas encontraron y corrigieron **4 bugs reales** que ni compilar ni los
+> Esas pruebas encontraron y corrigieron **varios bugs reales** que ni compilar ni los
 > tests unitarios habían detectado: (1) un índice de expresión no-IMMUTABLE en el
 > esquema, (2) un desajuste entre la estrategia de generación de IDs de Panache y
 > `BIGSERIAL`, (3) una incompatibilidad de prefijo bcrypt (`$2b$` de Python vs. `$2a$`
 > que exige WildFly Elytron) que habría bloqueado el login de todo usuario migrado
 > por el ETL, y (4) un `ClassCastException` en `AnalyticsService` (Hibernate 7 mapea
 > `DATE` nativo a `java.time.LocalDate`, no `java.sql.Date`) que solo se manifestaba
-> con filas reales en `consulta_log` — con la tabla vacía el bug era invisible. Los
-> cuatro ya están corregidos en el código actual.
+> con filas reales en `consulta_log` — con la tabla vacía el bug era invisible. Más
+> tarde, al agregar el módulo de estudio, apareció un quinto: (5) la app **no arrancaba**
+> si `GOOGLE_APPLICATION_CREDENTIALS_JSON` estaba vacía (SmallRye Config convierte "" a
+> null y rompe la inyección de un `String` plano). Ahora Firebase degrada con un WARN
+> legible y la app levanta igual. Todos están corregidos en el código actual.
 
 ### Tip para quien pruebe esto con Postman: usar el emulador de Firebase Auth
 
@@ -67,14 +71,6 @@ Y el canje de token en Postman apunta al emulador en vez de a Google:
 POST http://localhost:9099/identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=fake-api-key
 ```
 (cualquier string sirve como `key` contra el emulador). El resto del flujo es idéntico.
-| `GET /admin/dashboard` | ⏳ Pendiente (Fase 3) | |
-| `GET /admin/stats/*`, `/admin/recent-logs`, `/admin/faq-analytics` | ⏳ Pendiente (Fase 3) | |
-| `GET /docente/seccion/{codigo}`, `/docente/resumen/{codigo}` | ⏳ Pendiente (Fase 3) | |
-| `POST /telegram/webhook`, `/telegram/setup-webhook`, `GET /telegram/status` | ⏳ Pendiente (Fase 4) | |
-| `POST /transcribe` | ⏳ Pendiente (Fase 4) | |
-
-Los dos endpoints de negocio más importantes — **login** y **chat** — ya están completos
-y son los que vale la pena probar primero.
 
 ---
 
@@ -417,6 +413,109 @@ respuesta 200 válida.
 
 **Errores:** `400` si el audio decodificado pesa menos de 1000 bytes o el base64 es
 inválido; `503` si falta `GEMINI_API_KEY`; `401` sin token.
+
+---
+
+## `/estudio/*` — Módulo de estudio personalizado
+
+Todos requieren `Authorization: Bearer <idToken>` y **rol `estudiante`**. Cada alumno
+solo accede a lo suyo: el código sale del token verificado, nunca de la URL o el body
+(verificado en vivo — un alumno recibe `404` al pedir material de otro).
+
+### Historia 1 — Sílabo → ruta de estudio
+
+```
+POST /estudio/materiales              subir el sílabo (tipo: "SILABO")
+POST /estudio/materiales/{id}/ruta    generar la ruta con IA
+GET  /estudio/rutas                   listar rutas
+GET  /estudio/rutas/{id}              ruta con sus temas
+PATCH /estudio/temas/{id}             marcar tema completado
+```
+
+**Subir material** (el archivo va en base64, igual que en `/chat`):
+```json
+{
+  "nombre_archivo": "silabo_seguridad.pdf",
+  "mime_type": "application/pdf",
+  "file_data": "<base64 puro, sin el prefijo data:...>",
+  "tipo": "SILABO",
+  "codigo_curso": "16947"
+}
+```
+Formatos soportados: **PDF** (PDFBox), **PPTX** (POI), **DOCX**, **XLSX**, TXT/CSV/MD.
+Un PDF escaneado (solo imágenes) devuelve `400` porque no tiene texto extraíble.
+
+**Ejemplo real** de ruta generada desde un sílabo de Seguridad Informática:
+```json
+{
+  "id": 2, "curso": "SEGURIDAD INFORMATICA (16947)",
+  "titulo": "Ruta de Estudio: Seguridad Informática Esencial",
+  "total_temas": 6, "temas_completados": 0,
+  "temas": [
+    {"id": 7, "orden": 1, "titulo": "Fundamentos de la Seguridad Informática",
+     "descripcion": "...", "horas_estimadas": 5.0, "completado": false}
+  ]
+}
+```
+
+### Historia 2 — Materiales → cuestionarios y resúmenes
+
+```
+POST /estudio/materiales/{id}/cuestionario?preguntas=8    generar cuestionario
+GET  /estudio/cuestionarios                                listar
+GET  /estudio/cuestionarios/{id}                           con preguntas y respuestas
+POST /estudio/materiales/{id}/resumen                      generar resumen
+```
+
+Los cuestionarios son de **autoevaluación**: la respuesta correcta y la explicación
+vienen en la respuesta (el alumno estudia con ellos, no es un examen calificado).
+`preguntas` se acota automáticamente entre 3 y 20.
+
+```json
+{
+  "titulo": "Cuestionario de Autoevaluación: Inteligencia de Negocios (31662)",
+  "preguntas": [{
+    "orden": 1,
+    "enunciado": "¿Cuál es el objetivo principal del curso...?",
+    "opciones": ["Desarrollar software...", "Transformar datos...", "...", "..."],
+    "indice_correcto": 1,
+    "explicacion": "La sumilla del curso establece que..."
+  }]
+}
+```
+
+### Historia 3 — Meta diaria y racha
+
+```
+GET  /estudio/meta        meta + estado de la racha
+PUT  /estudio/meta        fijar meta   {"minutos_diarios": 45}
+POST /estudio/sesiones    registrar estudio {"minutos": 30, "tema_id": 7, "nota": "..."}
+GET  /estudio/racha       igual que GET /estudio/meta
+```
+
+```json
+{
+  "minutos_diarios": 45, "minutos_hoy": 55, "meta_cumplida_hoy": true,
+  "racha_actual": 5, "mejor_racha": 5, "minutos_semana": 155,
+  "ultimos7_dias": [{"fecha": "2026-08-17", "minutos": 55, "cumplida": true}]
+}
+```
+
+**Reglas de la racha** (verificadas con casos de borde en vivo):
+- Se cuenta en días del **calendario de Lima**, no UTC: estudiar 23:30 hora peruana
+  cuenta para ese día.
+- Si **hoy** todavía no cumpliste, la racha **no se corta** — se cuenta desde ayer. De
+  lo contrario todo alumno vería racha 0 cada mañana.
+- Un día sin cumplir en el medio sí corta la racha.
+
+Validaciones: sesión entre 1 y 1440 minutos, meta entre 5 y 720 (devuelven `422`).
+
+**Casos de prueba sugeridos:**
+1. Subir un sílabo PDF → generar ruta → verificar temas ordenados
+2. Subir un PPTX → generar cuestionario de 5 preguntas
+3. Fijar meta 45 → registrar 25 min (no cumplida) → registrar 30 más (cumplida, racha 1)
+4. Intentar ver `/estudio/materiales/{id}` de otro alumno → `404`
+5. Registrar sesión de 0 minutos → `422`
 
 ---
 

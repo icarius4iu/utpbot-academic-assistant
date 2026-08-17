@@ -8,6 +8,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFShape;
+import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.apache.poi.xslf.usermodel.XSLFTextShape;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.jboss.logging.Logger;
 
 import java.io.ByteArrayInputStream;
@@ -96,5 +103,79 @@ public class DocumentExtractionService {
             LOG.warn("Error extrayendo XLSX", e);
             return "(No se pudo extraer el contenido del archivo Excel)";
         }
+    }
+
+    /**
+     * Texto de un PPTX, diapositiva por diapositiva. Usado por el módulo de estudio
+     * (materiales de clase); el flujo de /chat no lo necesitaba porque los PPT no
+     * estaban contemplados como adjunto en el backend Python original.
+     */
+    public String extraerTextoPptx(byte[] fileBytes) {
+        try (XMLSlideShow ppt = new XMLSlideShow(new ByteArrayInputStream(fileBytes))) {
+            List<String> partes = new ArrayList<>();
+            int numero = 1;
+            for (XSLFSlide slide : ppt.getSlides()) {
+                partes.add("### Diapositiva " + numero++);
+                for (XSLFShape shape : slide.getShapes()) {
+                    if (shape instanceof XSLFTextShape textShape) {
+                        String texto = textShape.getText();
+                        if (texto != null && !texto.strip().isEmpty()) {
+                            partes.add(texto.strip());
+                        }
+                    }
+                }
+            }
+            return String.join("\n", partes);
+        } catch (IOException | RuntimeException e) {
+            LOG.warn("Error extrayendo PPTX", e);
+            return "(No se pudo extraer el contenido de la presentación)";
+        }
+    }
+
+    /**
+     * Texto plano de un PDF (PDFBox). En /chat los PDF siguen yendo nativos a Gemini;
+     * acá hace falta el texto para PERSISTIRLO y poder generar rutas, resúmenes y
+     * cuestionarios después sin volver a subir el archivo.
+     */
+    public String extraerTextoPdf(byte[] fileBytes) {
+        try (PDDocument doc = Loader.loadPDF(fileBytes)) {
+            PDFTextStripper stripper = new PDFTextStripper();
+            stripper.setSortByPosition(true);
+            String texto = stripper.getText(doc);
+            return texto == null ? "" : texto.strip();
+        } catch (IOException | RuntimeException e) {
+            LOG.warn("Error extrayendo PDF", e);
+            return "(No se pudo extraer el contenido del PDF)";
+        }
+    }
+
+    /**
+     * Punto de entrada del módulo de estudio: elige el extractor por MIME/extensión.
+     * Mismo orden de prioridad que construirMessages() en GeminiService, más PPTX y
+     * PDF que ahí no aplican.
+     */
+    public String extraerTexto(byte[] fileBytes, String nombreArchivo, String mimeType) {
+        String mime = mimeType == null ? "" : mimeType.toLowerCase();
+        String nombre = nombreArchivo == null ? "" : nombreArchivo.toLowerCase();
+
+        if (mime.contains("pdf") || nombre.endsWith(".pdf")) {
+            return extraerTextoPdf(fileBytes);
+        }
+        if (mime.contains("presentationml") || mime.contains("powerpoint") || nombre.endsWith(".pptx")) {
+            return extraerTextoPptx(fileBytes);
+        }
+        if (mime.contains("wordprocessingml") || mime.contains("msword") || nombre.endsWith(".docx")) {
+            return extraerTextoDocx(fileBytes);
+        }
+        if (mime.contains("spreadsheetml") || mime.contains("excel") || nombre.endsWith(".xlsx")) {
+            return extraerTextoXlsx(fileBytes);
+        }
+        if (mime.contains("text") || mime.contains("csv")
+                || nombre.endsWith(".txt") || nombre.endsWith(".csv") || nombre.endsWith(".md")) {
+            return new String(fileBytes, java.nio.charset.StandardCharsets.UTF_8);
+        }
+        // .ppt/.doc/.xls antiguos (formato binario OLE2) no están soportados: POI
+        // necesita clases distintas (HSLF/HWPF) y el caso de uso real es OOXML.
+        return "";
     }
 }

@@ -34,8 +34,9 @@ public class CalendarService {
             .connectTimeout(Duration.ofSeconds(10))
             .build();
 
+    /** Optional: ver la nota en FirebaseAdminInitializer sobre el arranque. */
     @ConfigProperty(name = "firebase.credentials.json")
-    String credentialsJson;
+    Optional<String> credentialsJson;
 
     @ConfigProperty(name = "google.calendar.id")
     String calendarId;
@@ -44,8 +45,8 @@ public class CalendarService {
 
     private synchronized GoogleCredentials credenciales() throws Exception {
         if (credenciales == null) {
-            GoogleCredentials base = (credentialsJson != null && !credentialsJson.isBlank())
-                    ? GoogleCredentials.fromStream(new ByteArrayInputStream(credentialsJson.getBytes(StandardCharsets.UTF_8)))
+            GoogleCredentials base = (credentialsJson.isPresent() && !credentialsJson.get().isBlank())
+                    ? GoogleCredentials.fromStream(new ByteArrayInputStream(credentialsJson.get().getBytes(StandardCharsets.UTF_8)))
                     : GoogleCredentials.getApplicationDefault();
             credenciales = base.createScoped(SCOPE);
         }

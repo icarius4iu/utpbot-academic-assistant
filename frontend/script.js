@@ -382,6 +382,12 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.getElementById(`tab-${tab}`).classList.add('active');
   document.getElementById(`content-${tab}`).classList.add('active');
+
+  // El módulo de estudio carga sus datos recién al abrirse la pestaña, para no
+  // gastar llamadas al backend en cada login de quien no lo usa.
+  if (tab === 'estudio' && typeof inicializarEstudio === 'function') {
+    inicializarEstudio();
+  }
 }
 
 // Genera botones de consultas sugeridas dinámicamente según el rol

@@ -75,6 +75,7 @@
         <div class="sidebar-tabs">
           <div class="sidebar-tab active" onclick="switchTab('quick')" id="tab-quick" data-i18n="sidebar.tab1">Consultas Ágiles</div>
           <div class="sidebar-tab" onclick="switchTab('history')" id="tab-history" data-i18n="sidebar.tab2">Historial</div>
+          <div class="sidebar-tab" onclick="switchTab('estudio')" id="tab-estudio">Estudio</div>
         </div>
 
         <div class="sidebar-content-area tab-content active" id="content-quick">
@@ -92,6 +93,56 @@
             <div id="history-list">
               <!-- Historial Dinámico -->
             </div>
+          </div>
+        </div>
+
+
+        <!-- ══ Módulo de estudio personalizado ══ -->
+        <div class="sidebar-content-area tab-content" id="content-estudio">
+
+          <!-- Racha y meta diaria -->
+          <div class="sidebar-section">
+            <h3>Mi racha</h3>
+            <div id="racha-box" class="est-racha">
+              <div class="est-racha-num"><span id="racha-dias">–</span><small>días</small></div>
+              <div class="est-racha-hoy">
+                <div id="racha-progreso-texto" class="est-muted">Cargando…</div>
+                <div class="est-barra"><div id="racha-barra" class="est-barra-fill"></div></div>
+              </div>
+            </div>
+            <div id="racha-semana" class="est-semana"></div>
+            <div class="est-fila">
+              <input type="number" id="input-minutos" min="1" max="1440" placeholder="min" />
+              <button class="est-btn" onclick="registrarSesion()">Registrar estudio</button>
+            </div>
+            <div class="est-fila">
+              <input type="number" id="input-meta" min="5" max="720" placeholder="meta diaria" />
+              <button class="est-btn est-btn-sec" onclick="guardarMeta()">Fijar meta</button>
+            </div>
+            <div id="racha-msg" class="est-muted"></div>
+          </div>
+
+          <!-- Subida de sílabo / materiales -->
+          <div class="sidebar-section">
+            <h3>Mis materiales</h3>
+            <p class="est-muted">Subí tu sílabo para generar una ruta de estudio, o material de clase para crear cuestionarios y resúmenes.</p>
+            <div class="est-fila">
+              <select id="select-tipo-material">
+                <option value="SILABO">Sílabo</option>
+                <option value="MATERIAL">Material</option>
+              </select>
+              <input type="text" id="input-curso-material" placeholder="curso (opc.)" />
+            </div>
+            <input type="file" id="input-archivo-estudio" accept=".pdf,.pptx,.docx,.xlsx,.txt,.csv,.md" />
+            <button class="est-btn" onclick="subirMaterial()">Subir archivo</button>
+            <div id="material-msg" class="est-muted"></div>
+            <div id="lista-materiales"></div>
+          </div>
+
+          <!-- Rutas generadas -->
+          <div class="sidebar-section">
+            <h3>Mis rutas de estudio</h3>
+            <div id="lista-rutas"><p class="est-muted">Sin rutas todavía.</p></div>
           </div>
         </div>
 
@@ -226,6 +277,7 @@
   </div>
 
   <script src="./script.js"></script>
+  <script src="./estudio.js"></script>
 </body>
 
 </html>

@@ -1,5 +1,6 @@
 package com.utpbot.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.genai.Client;
 import com.google.genai.types.*;
@@ -369,5 +370,62 @@ public class GeminiService {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    // ===================== GENERACIÓN ESTRUCTURADA (módulo de estudio) =====================
+
+    /**
+     * Pide a Gemini una respuesta en JSON puro y la devuelve parseada. A diferencia de
+     * {@link #generarRespuesta}, acá NO se declaran tools ni se extraen sugerencias: es
+     * una llamada de un solo turno para generar datos (ruta de estudio, cuestionario).
+     *
+     * Usa {@code responseMimeType("application/json")} para que el modelo no envuelva la
+     * salida en ```json ... ``` — igual se limpia por las dudas, porque algunos modelos
+     * del fallback lo siguen haciendo.
+     *
+     * Recorre la MISMA cadena de modelos que el chat, con idéntica clasificación de
+     * errores, para no tener dos comportamientos distintos ante cuota agotada.
+     */
+    public JsonNode generarJson(String systemPrompt, String userPrompt) {
+        String ultimoError = null;
+
+        for (String modelo : modelosFallback()) {
+            try {
+                GenerateContentResponse response = client().models.generateContent(
+                        modelo,
+                        Content.fromParts(Part.fromText(userPrompt)),
+                        GenerateContentConfig.builder()
+                                .systemInstruction(Content.fromParts(Part.fromText(systemPrompt)))
+                                .temperature(0.4f)
+                                .maxOutputTokens(8192)
+                                .responseMimeType("application/json")
+                                .build());
+
+                String texto = response.text() == null ? "" : response.text().strip();
+                return JSON.readTree(limpiarCercaJson(texto));
+
+            } catch (Exception e) {
+                ultimoError = String.valueOf(e.getMessage());
+                String err = ultimoError.toLowerCase();
+                if (err.contains("429") || err.contains("quota") || err.contains("rate")) {
+                    dormir(1000);
+                }
+                LOG.warnf("generarJson falló con '%s': %s", modelo, ultimoError);
+            }
+        }
+
+        throw ApiException.serviceUnavailable(
+                "La IA no pudo generar el contenido en este momento. Detalle: " + truncar(ultimoError, 150));
+    }
+
+    /** Quita el cercado ```json ... ``` si el modelo lo agregó pese a responseMimeType. */
+    private static String limpiarCercaJson(String texto) {
+        String t = texto.strip();
+        if (t.startsWith("```")) {
+            int primerSalto = t.indexOf('\n');
+            if (primerSalto > 0) t = t.substring(primerSalto + 1);
+            if (t.endsWith("```")) t = t.substring(0, t.length() - 3);
+        }
+        return t.strip();
     }
 }

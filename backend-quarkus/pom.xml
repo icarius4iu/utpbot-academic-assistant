@@ -21,6 +21,7 @@
         <firebase-admin.version>9.9.0</firebase-admin.version>
         <google-auth.version>1.48.0</google-auth.version>
         <poi.version>5.5.1</poi.version>
+        <pdfbox.version>3.0.7</pdfbox.version>
     </properties>
 
     <dependencyManagement>
@@ -137,6 +138,15 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
             <version>${poi.version}</version>
+        </dependency>
+
+        <!-- PDFBox: extracción de texto de PDFs para persistirlo (módulo de estudio).
+             En el flujo de /chat los PDF siguen yendo nativos a Gemini; acá hace falta
+             el texto plano para guardarlo y generar rutas/cuestionarios sin re-subir. -->
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>${pdfbox.version}</version>
         </dependency>
     </dependencies>
 
